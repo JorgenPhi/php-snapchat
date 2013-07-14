@@ -78,7 +78,7 @@ abstract class SnapchatAPI {
 	 * @see SnapchatAPI::encrypt()
 	 */
 	public function decrypt($data) {
-		mcrypt_decrypt(MCRYPT_RIJNDAEL_128, self::BLOB_ENCRYPTION_KEY, $data, MCRYPT_MODE_ECB);
+		return mcrypt_decrypt(MCRYPT_RIJNDAEL_128, self::BLOB_ENCRYPTION_KEY, $data, MCRYPT_MODE_ECB);
 	}
 
 	/**
@@ -93,7 +93,7 @@ abstract class SnapchatAPI {
 	 * @see SnapchatAPI::decrypt()
 	 */
 	public function encrypt($data) {
-		mcrypt_encrypt(MCRYPT_RIJNDAEL_128, self::BLOB_ENCRYPTION_KEY, $data, MCRYPT_MODE_ECB);
+		return mcrypt_encrypt(MCRYPT_RIJNDAEL_128, self::BLOB_ENCRYPTION_KEY, $data, MCRYPT_MODE_ECB);
 	}
 
 	/**
@@ -121,9 +121,9 @@ abstract class SnapchatAPI {
 		$hash2 = hash_final($hash);
 
 		// Create a new hash with pieces of the two we just made.
-		$result;
+		$result = '';
 		for ($i = 0; $i < strlen(self::HASH_PATTERN); $i++) {
-			$result += substr(self::HASH_PATTERN, $i, 1) ? $hash2[$i] : $hash1[$i];
+			$result .= substr(self::HASH_PATTERN, $i, 1) ? $hash2[$i] : $hash1[$i];
 		}
 
 		return $result;
@@ -157,7 +157,7 @@ abstract class SnapchatAPI {
 		);
 		curl_setopt_array($ch, $options);
 
-		$data['req_token'] = $this->hash($params[0], $params[1]);
+		$data['req_token'] = self::hash($params[0], $params[1]);
 
 		$result = curl_exec($ch);
 		if ($result === FALSE) {
