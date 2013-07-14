@@ -22,95 +22,191 @@
  * THE SOFTWARE.
  */
 
- require_once 'snapchat_api.php';
+require_once 'snapchat_api.php';
 
- /**
-  * Extends the SnapchatAPI class to provide the API functions you'd expect.
-  */
- class Snapchat extends SnapchatAPI {
- 	/**
- 	 * Media type: Image.
- 	 */
- 	const MEDIA_IMAGE = 0;
+/**
+ * Extends the SnapchatAPI class to provide the API functions you'd expect.
+ */
+class Snapchat extends SnapchatAPI {
+	/**
+	 * Media type: Image.
+	 */
+	const MEDIA_IMAGE = 0;
 
- 	/**
- 	 * Media type: Video.
- 	 */
- 	const MEDIA_VIDEO = 1;
+	/**
+	 * Media type: Video.
+	 */
+	const MEDIA_VIDEO = 1;
 
- 	/**
- 	 * Sets up some initial variables.
- 	 */
- 	public function __construct() {
- 		$this->auth_token = FALSE;
- 		$this->username = FALSE;
- 	}
+	/**
+	 * Snap status: Sent.
+	 */
+	const STATUS_SENT = 0;
 
- 	/**
- 	 * Handles login.
- 	 *
- 	 * @param $username
- 	 *   The username for the Snapchat account.
- 	 * @param $password
- 	 *   The password associated with the username.
- 	 *
- 	 * @return
- 	 *   The data returned by the service. Generally, returns the same result
- 	 *   as calling self::update().
- 	 */
- 	public function login($username, $password) {
- 		$timestamp = parent::timestamp();
- 		$result = parent::post(
- 			'/login',
- 			array(
+	/**
+	 * Snap status: Delivered.
+	 */
+	const STATUS_DELIVERED = 1;
+
+	/**
+	 * Snap status: Opened.
+	 */
+	const STATUS_OPENED = 2;
+
+	/**
+	 * Snap status: Screenshot.
+	 */
+	const STATUS_SCREENSHOT = 3;
+
+	/**
+	 * Sets up some initial variables.
+	 */
+	public function __construct() {
+		$this->auth_token = FALSE;
+		$this->username = FALSE;
+	}
+
+	/**
+	 * Handles login.
+	 *
+	 * @param $username
+	 *   The username for the Snapchat account.
+	 * @param $password
+	 *   The password associated with the username.
+	 *
+	 * @return
+	 *   The data returned by the service. Generally, returns the same result
+	 *   as calling self::getUpdates().
+	 */
+	public function login($username, $password) {
+		$timestamp = parent::timestamp();
+		$result = parent::post(
+			'/login',
+			array(
  				'username' => $username,
- 				'password' => $password,
- 				'timestamp' => $timestamp,
- 			),
- 			array(
- 				parent::STATIC_TOKEN,
- 				$timestamp,
- 			)
- 		);
+				'password' => $password,
+				'timestamp' => $timestamp,
+			),
+			array(
+				parent::STATIC_TOKEN,
+				$timestamp,
+			)
+		);
 
- 		// If the server sends back an auth token, remember it.
- 		if (!empty($result->auth_token)) {
- 			$this->auth_token = $result->auth_token;
- 		}
+		// If the server sends back an auth token, remember it.
+		if (!empty($result->auth_token)) {
+			$this->auth_token = $result->auth_token;
+		}
 
- 		// Store the logged in user for future requests.
- 		if (!empty($result->username)) {
- 			$this->username = $result->username;
- 		}
+		// Store the logged in user.
+		if (!empty($result->username)) {
+			$this->username = $result->username;
+		}
 
  		return $result;
- 	}
+	}
 
- 	/**
- 	 * Logs out the current user.
- 	 *
- 	 * @return
- 	 *   TRUE if successful, FALSE otherwise.
- 	 */
- 	 public function logout() {
- 	 	// Only logged in users can be logged out.
- 	 	if (!$this->username) {
- 	 		return FALSE;
- 	 	}
+	/**
+	 * Logs out the current user.
+	 *
+	 * @return
+	 *   TRUE if successful, FALSE otherwise.
+	 */
+	public function logout() {
+		// Only allow authenticated users to log out.
+		if (!$this->username) {
+			return FALSE;
+		}
 
- 	 	$timestamp = parent::timestamp();
- 	 	$result = parent::post(
- 	 		'/logout',
- 	 		array(
- 	 			'timestamp' => $timestamp,
- 	 			'username' => $this->username,
- 	 		),
- 	 		array(
- 	 			$this->auth_token,
- 	 			$timestamp,
- 	 		)
- 	 	);
+		$timestamp = parent::timestamp();
+		$result = parent::post(
+			'/logout',
+			array(
+				'timestamp' => $timestamp,
+				'username' => $this->username,
+			),
+			array(
+				$this->auth_token,
+				$timestamp,
+			)
+		);
 
  	 	return is_null($result);
- 	 }
- }
+	}
+
+	/**
+ 	 * Retrieves general user, friend, and snap updates.
+	 *
+	 * @param $since
+	 *   (optional) The maximum age of the updates to be fetched in seconds
+	 *   since epoch. Defaults to 0 because we generally want them all.
+ 	 *
+ 	 * @return
+ 	 *   The data returned by the service or FALSE on failure.
+ 	 */
+	public function getUpdates($since = 0) {
+		// Only allow authenticated users to get updates.
+	 	if (!$this->username) {
+	 		return FALSE;
+		}
+
+		$timestamp = parent::timestamp();
+		$result = parent::post(
+			'/updates',
+			array(
+				'timestamp' => $timestamp,
+				'username' => $this->username,
+				'update_timestamp' => $since,
+			),
+			array(
+				$this->auth_token,
+				$timestamp,
+			)
+		);
+
+		// If the server sends back an auth token, remember it.
+ 		if (!empty($result->auth_token)) {
+			$this->auth_token = $result->auth_token;
+		}
+
+ 		return $result;
+	}
+
+	/**
+	 * Gets the user's snaps.
+	 *
+	 * @param $since
+	 *   (optional) The maximum age of the snaps to be fetched in seconds
+	 *   since epoch.
+	 *
+	 * @return
+	 *   An array of snaps or FALSE on failure.
+	 *
+	 * @see self::getUpdates()
+	 */
+	public function getSnaps($since = 0) {
+		$updates = self::getUpdates($since);
+
+		if (!$updates) {
+			return FALSE;
+		}
+
+		// We'll make these a little more readable.
+		$snaps = array();
+		foreach ($updates->snaps as $snap) {
+			$snaps[] = (object) array(
+				'id' => $snap->id,
+				'media_id' => empty($snap->c_id) ? FALSE : $snap->c_id,
+				'media_type' => $snap->m,
+				'sender' => empty($snap->sn) ? $this->username : $snap->sn,
+				'recipient' => empty($snap->rp) ? $this->username : $snap->rp,
+				'status' => $snap->st,
+				'screenshot_count' => empty($snap->c) ? 0 : $snap->c,
+				'sent' => $snap->sts,
+				'opened' => $snap->ts,
+			);
+		}
+
+		return $snaps;
+	}
+}
