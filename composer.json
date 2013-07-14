@@ -1,0 +1,15 @@
+{
+    "name": "dstelljes/php-snapchat",
+    "description": "A PHP library for the Snapchat API",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Daniel Stelljes",
+            "email": "iam@danielstelljes.net"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+
+    }
+}
