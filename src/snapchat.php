@@ -252,4 +252,87 @@ class Snapchat extends SnapchatAPI {
 
 		return FALSE;
 	}
+
+	/**
+	 * Uploads a file.
+	 *
+	 * @param $type
+	 *   The media type, i.e. MEDIA_IMAGE or MEDIA_VIDEO.
+	 * @param $data
+	 *   The file data to upload.
+	 *
+	 * @return
+	 *   The media ID or FALSE on failure.
+	 */
+	function upload($type, $data) {
+		// Make sure we're logged in and have a valid access token.
+	 	if (!$this->auth_token || !$this->username) {
+	 		return FALSE;
+		}
+
+		// To make cURL happy, we write the data to a file first.
+		$temp = tempnam(sys_get_temp_dir(), 'Snap');
+		file_put_contents($temp, parent::encrypt($data));
+
+		// For the adventurous: What happens when you upload more than one snap
+		// per second?
+		$media_id = strtoupper($this->username) . time();
+		$timestamp = parent::timestamp();
+		$result = parent::post(
+			'/upload',
+			array(
+				'media_id' => $media_id,
+				'type' => $type,
+				'data' => '@' . $temp . ';filename=data',
+				'timestamp' => $timestamp,
+				'username' => $this->username,
+			),
+			array(
+				$this->auth_token,
+				$timestamp,
+			),
+			TRUE
+		);
+
+		return is_null($result) ? $media_id : FALSE;
+	}
+
+	/**
+	 * Sends a snap.
+	 *
+	 * @param $media_id
+	 *   The media ID of the snap to send.
+	 * @param $recipients
+	 *   An array of recipients.
+	 * @param $time
+	 *   (optional) The time in seconds the snap should be available (1-10).
+	 *   Defaults to 3.
+	 *
+	 * @return
+	 *   TRUE on success or FALSE on failure.
+	 */
+	function send($media_id, $recipients, $time = 3) {
+		// Make sure we're logged in and have a valid access token.
+	 	if (!$this->auth_token || !$this->username) {
+	 		return FALSE;
+		}
+
+		$timestamp = parent::timestamp();
+		$result = parent::post(
+			'/send',
+			array(
+				'media_id' => $media_id,
+				'recipient' => implode(',', $recipients),
+				'time' => $time,
+				'timestamp' => $timestamp,
+				'username' => $this->username,
+			),
+			array(
+				$this->auth_token,
+				$timestamp,
+			)
+		);
+
+		return is_null($result);
+	}
 }
