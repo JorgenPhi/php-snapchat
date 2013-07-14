@@ -67,6 +67,16 @@ abstract class SnapchatAPI {
 	);
 
 	/**
+	 * Returns the current timestamp.
+	 *
+	 * @return
+	 *   The current timestamp, expressed in milliseconds since epoch.
+	 */
+	public function timestamp() {
+		return round(microtime(TRUE) * 1000);
+	}
+
+	/**
 	 * Decrypts blob data.
 	 *
 	 * @param $data
@@ -143,12 +153,22 @@ abstract class SnapchatAPI {
 	 *   added automatically.
 	 * @param $params
 	 *   An array containing the parameters used to generate the request token.
+	 * @param $multipart
+	 *   (optional) If TRUE, sends the request as multipart/form-data. Defaults
+	 *   to FALSE.
 	 *
 	 * @return
 	 *   The data returned from the API (decoded if JSON).
 	 */
-	public function post($endpoint, $data, $params) {
+	public function post($endpoint, $data, $params, $multipart = FALSE) {
 		$ch = curl_init();
+
+		$data['req_token'] = self::hash($params[0], $params[1]);
+		$data['version'] = self::VERSION;
+
+		if (!$multipart) {
+			$data = http_build_query($data);
+		}
 
 		$options = self::$CURL_OPTIONS + array(
 			CURLOPT_POST => TRUE,
@@ -156,8 +176,6 @@ abstract class SnapchatAPI {
 			CURLOPT_URL => self::URL . $endpoint,
 		);
 		curl_setopt_array($ch, $options);
-
-		$data['req_token'] = self::hash($params[0], $params[1]);
 
 		$result = curl_exec($ch);
 		if ($result === FALSE) {
