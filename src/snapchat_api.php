@@ -158,7 +158,8 @@ abstract class SnapchatAPI {
 	 *   to FALSE.
 	 *
 	 * @return
-	 *   The data returned from the API (decoded if JSON).
+	 *   The data returned from the API (decoded if JSON). Returns FALSE if the
+	 *   request failed.
 	 */
 	public function post($endpoint, $data, $params, $multipart = FALSE) {
 		$ch = curl_init();
@@ -178,9 +179,14 @@ abstract class SnapchatAPI {
 		curl_setopt_array($ch, $options);
 
 		$result = curl_exec($ch);
-		if ($result === FALSE) {
-			// TODO: error handling
+
+		// If the cURL request fails, return FALSE. Also check the status code
+		// since the API generally won't return friendly errors.
+		if ($result === FALSE || curl_getinfo($ch, CURLINFO_HTTP_CODE) != 200) {
+			curl_close($ch);
+			return FALSE;
 		}
+
 		curl_close($ch);
 
 		$data = json_decode($result);

@@ -43,6 +43,7 @@
  	 */
  	public function __construct() {
  		$this->auth_token = FALSE;
+ 		$this->username = FALSE;
  	}
 
  	/**
@@ -73,11 +74,43 @@
  		);
 
  		// If the server sends back an auth token, remember it.
- 		if (is_array($result) && !empty($result['auth_token'])) {
- 			$this->auth_token = $result['auth_token'];
- 			unset($result['auth_token']);
+ 		if (!empty($result->auth_token)) {
+ 			$this->auth_token = $result->auth_token;
+ 		}
+
+ 		// Store the logged in user for future requests.
+ 		if (!empty($result->username)) {
+ 			$this->username = $result->username;
  		}
 
  		return $result;
  	}
+
+ 	/**
+ 	 * Logs out the current user.
+ 	 *
+ 	 * @return
+ 	 *   TRUE if successful, FALSE otherwise.
+ 	 */
+ 	 public function logout() {
+ 	 	// Only logged in users can be logged out.
+ 	 	if (!$this->username) {
+ 	 		return FALSE;
+ 	 	}
+
+ 	 	$timestamp = parent::timestamp();
+ 	 	$result = parent::post(
+ 	 		'/logout',
+ 	 		array(
+ 	 			'timestamp' => $timestamp,
+ 	 			'username' => $this->username,
+ 	 		),
+ 	 		array(
+ 	 			$this->auth_token,
+ 	 			$timestamp,
+ 	 		)
+ 	 	);
+
+ 	 	return is_null($result);
+ 	 }
  }
