@@ -185,7 +185,7 @@ class Snapchat extends SnapchatAPI {
 	 * @see self::getUpdates()
 	 */
 	public function getSnaps($since = 0) {
-		$updates = self::getUpdates($since);
+		$updates = $this->getUpdates($since);
 
 		if (!$updates) {
 			return FALSE;
@@ -219,7 +219,7 @@ class Snapchat extends SnapchatAPI {
 	 * @return
 	 *   The snap data or FALSE on failure.
 	 */
-	function getMedia($id) {
+	public function getMedia($id) {
 		// Make sure we're logged in and have a valid access token.
 	 	if (!$this->auth_token || !$this->username) {
 	 		return FALSE;
@@ -251,6 +251,96 @@ class Snapchat extends SnapchatAPI {
 		}
 
 		return FALSE;
+	}
+
+	/**
+	 * Sends event information to Snapchat.
+	 *
+	 * @param $events
+	 *   An array of events to send to Snapchat (generally usage data).
+	 * @param $snap_info
+	 *   (optional) Data to send along in addition to the event array. This is
+	 *   used by the app to mark snaps as viewed. Defaults to an empty object.
+	 *
+	 * @return
+	 *   TRUE on success, FALSE on failure.
+	 *
+	 * @see self::markSnapViewed()
+	 */
+	public function sendEvents($events, $snap_info = array()) {
+		// Make sure we're logged in and have a valid access token.
+	 	if (!$this->auth_token || !$this->username) {
+	 		return FALSE;
+		}
+
+		$timestamp = parent::timestamp();
+		$result = parent::post(
+			'/update_snaps',
+			array(
+				'events' => json_encode($events),
+				'json' => json_encode($snap_info),
+				'timestamp' => $timestamp,
+				'username' => $this->username,
+			),
+			array(
+				$this->auth_token,
+				$timestamp,
+			)
+		);
+
+		return is_null($result);
+	}
+
+	/**
+	 * Marks a snap as viewed.
+	 *
+	 * Snaps can be downloaded an (apparently) unlimited amount of times before
+	 * they are viewed. Once marked as viewed, they are deleted.
+	 *
+	 * It's worth noting that it seems possible to mark others' snaps as viewed
+	 * as long as you know the ID. This hasn't been tested thoroughly, but it
+	 * could be useful if you send a snap that you immediately regret.
+	 *
+	 * @param $id
+	 *   The snap to mark as viewed.
+	 * @param $time
+	 *   The amount of time (in seconds) the snap was viewed. Defaults to 1.
+	 *
+	 * @return
+	 *   TRUE on success, FALSE on failure.
+	 */
+	public function markSnapViewed($id, $time = 1) {
+		$snap_info = array(
+			$id => array(
+				// Here Snapchat saw fit to use time as a float instead of
+				// straight milliseconds.
+				't' => microtime(TRUE),
+				// We add a small variation here just to make it look more
+				// realistic.
+				'sv' => $time + (mt_rand() / mt_getrandmax() / 10),
+			),
+		);
+
+		$events = array(
+			array(
+				'eventName' => 'SNAP_VIEW',
+				'params' => array(
+					'id' => $id,
+					// There are others, but it wouldn't be worth the effort to
+					// put them in here since they likely don't matter.
+				),
+				'ts' => time() - $time,
+			),
+			array(
+				'eventName' => 'SNAP_EXPIRED',
+				'params' => array(
+					'id' => $id,
+				),
+				'ts' => time()
+			),
+		);
+
+		return $this->sendEvents($events, $snap_info);
 	}
 
 	/**
