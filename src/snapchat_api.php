@@ -113,16 +113,17 @@ abstract class SnapchatAPI {
 		$second = $second . self::SECRET;
 
 		// Hash the values.
-		$hash1 = hash_init('sha256');
-		hash_update($hash1, $first);
-		$hash2 = hash_init('sha256');
-		hash_update($hash2, $second);
+		$hash = hash_init('sha256');
+		hash_update($hash, $first);
+		$hash1 = hash_final($hash);
+		$hash = hash_init('sha256');
+		hash_update($hash, $second);
+		$hash2 = hash_final($hash);
 
 		// Create a new hash with pieces of the two we just made.
-		$pattern = self::HASH_PATTERN;
 		$result;
 		for ($i = 0; $i < strlen(self::HASH_PATTERN); $i++) {
-			$result += $pattern[$i] ? $hash2[$i] : $hash1[$i];
+			$result += substr(self::HASH_PATTERN, $i, 1) ? $hash2[$i] : $hash1[$i];
 		}
 
 		return $result;
