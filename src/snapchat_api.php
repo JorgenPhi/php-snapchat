@@ -63,7 +63,7 @@ abstract class SnapchatAPI {
 		CURLOPT_CONNECTTIMEOUT => 5,
 		CURLOPT_RETURNTRANSFER => TRUE,
 		CURLOPT_TIMEOUT => 10,
-		CURLOPT_USERAGENT => 'Snapchat/' . VERSION . ' CFNetwork/609.1.4 Darwin/13.0.0',
+		CURLOPT_USERAGENT => 'Snapchat/5.0.1 CFNetwork/609.1.4 Darwin/13.0.0',
 	);
 
 	/**
@@ -119,9 +119,10 @@ abstract class SnapchatAPI {
 		hash_update($hash2, $second);
 
 		// Create a new hash with pieces of the two we just made.
+		$pattern = self::HASH_PATTERN;
 		$result;
-		for ($i = 0; $i < strlen(self::HASH_PATTERN), $i++) {
-			$result += self::HASH_PATTERN[$i] ? $hash2[$i] : $hash1[$i];
+		for ($i = 0; $i < strlen(self::HASH_PATTERN); $i++) {
+			$result += $pattern[$i] ? $hash2[$i] : $hash1[$i];
 		}
 
 		return $result;
@@ -148,7 +149,7 @@ abstract class SnapchatAPI {
 	public function post($endpoint, $data, $params) {
 		$ch = curl_init();
 
-		$options = self:$CURL_OPTIONS + array(
+		$options = self::$CURL_OPTIONS + array(
 			CURLOPT_POST => TRUE,
 			CURLOPT_POSTFIELDS => $data,
 			CURLOPT_URL => self::URL . $endpoint,
