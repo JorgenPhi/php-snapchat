@@ -140,6 +140,29 @@ abstract class SnapchatAPI {
 	}
 
 	/**
+	 * Checks to see if a blob looks like a media file.
+	 *
+	 * @param $blob
+	 *   The blob data (or just the header).
+	 *
+	 * @return
+	 *   TRUE if it's a media file, FALSE if it's not.
+	 */
+	function is_media($blob) {
+		// Check for a JPG header.
+		if ($blob[0] == chr(0xFF) && $blob[1] == chr(0xD8)) {
+			return TRUE;
+		}
+
+		// Check for a MP4 header.
+		if ($blob[0] == chr(0x00) && $blob[1] == chr(0x00)) {
+			return TRUE;
+		}
+
+		return FALSE;
+	}
+
+	/**
 	 * Runs a POST request against the API.
 	 *
 	 * Snapchat appears to only use POST for API requests, so this is really

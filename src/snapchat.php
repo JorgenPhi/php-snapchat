@@ -113,9 +113,9 @@ class Snapchat extends SnapchatAPI {
 	 *   TRUE if successful, FALSE otherwise.
 	 */
 	public function logout() {
-		// Only allow authenticated users to log out.
-		if (!$this->username) {
-			return FALSE;
+		// Make sure we're logged in and have a valid access token.
+	 	if (!$this->auth_token || !$this->username) {
+	 		return FALSE;
 		}
 
 		$timestamp = parent::timestamp();
@@ -145,8 +145,8 @@ class Snapchat extends SnapchatAPI {
  	 *   The data returned by the service or FALSE on failure.
  	 */
 	public function getUpdates($since = 0) {
-		// Only allow authenticated users to get updates.
-	 	if (!$this->username) {
+		// Make sure we're logged in and have a valid access token.
+	 	if (!$this->auth_token || !$this->username) {
 	 		return FALSE;
 		}
 
@@ -208,5 +208,48 @@ class Snapchat extends SnapchatAPI {
 		}
 
 		return $snaps;
+	}
+
+	/**
+	 * Downloads a snap.
+	 *
+	 * @param $id
+	 *   The snap ID.
+	 *
+	 * @return
+	 *   The snap data or FALSE on failure.
+	 */
+	function getMedia($id) {
+		// Make sure we're logged in and have a valid access token.
+	 	if (!$this->auth_token || !$this->username) {
+	 		return FALSE;
+		}
+
+		$timestamp = parent::timestamp();
+		$result = parent::post(
+			'/blob',
+			array(
+				'id' => $id,
+				'timestamp' => $timestamp,
+				'username' => $this->username,
+			),
+			array(
+				$this->auth_token,
+				$timestamp,
+			)
+		);
+
+		if (parent::is_media(substr($result, 0, 2))) {
+			return $result;
+		}
+		else {
+			$result = parent::decrypt($result);
+
+			if (parent::is_media(substr($result, 0, 2))) {
+				return $result;
+			}
+		}
+
+		return FALSE;
 	}
 }
