@@ -77,6 +77,23 @@ abstract class SnapchatAPI {
 	}
 
 	/**
+	 * Pads data using PKCS5.
+	 *
+	 * @param $data
+	 *   The data to be padded.
+	 * @param $blocksize
+	 *   The block size to pad to. Defaults to 16.
+	 *
+	 * @return
+	 *   The padded data.
+	 */
+	public function pad($data, $blocksize = 16) {
+		$pad = $blocksize - (strlen($data) % $blocksize);
+		return $data . str_repeat(chr($pad), $pad);
+	}
+
+
+	/**
 	 * Decrypts blob data.
 	 *
 	 * @param $data
@@ -88,7 +105,7 @@ abstract class SnapchatAPI {
 	 * @see SnapchatAPI::encrypt()
 	 */
 	public function decrypt($data) {
-		return mcrypt_decrypt(MCRYPT_RIJNDAEL_128, self::BLOB_ENCRYPTION_KEY, $data, MCRYPT_MODE_ECB);
+		return mcrypt_decrypt(MCRYPT_RIJNDAEL_128, self::BLOB_ENCRYPTION_KEY, self::pad($data), MCRYPT_MODE_ECB);
 	}
 
 	/**
@@ -103,11 +120,11 @@ abstract class SnapchatAPI {
 	 * @see SnapchatAPI::decrypt()
 	 */
 	public function encrypt($data) {
-		return mcrypt_encrypt(MCRYPT_RIJNDAEL_128, self::BLOB_ENCRYPTION_KEY, $data, MCRYPT_MODE_ECB);
+		return mcrypt_encrypt(MCRYPT_RIJNDAEL_128, self::BLOB_ENCRYPTION_KEY, self::pad($data), MCRYPT_MODE_ECB);
 	}
 
 	/**
-	 * Implementation of Snapchat's obscure hashing function.
+	 * Implementation of Snapchat's obscure hashing algorithm.
 	 *
 	 * @param $first
 	 *   The first value to use in the hash.
