@@ -37,6 +37,16 @@ class Snapchat extends SnapchatAPI {
 	const STATUS_SCREENSHOT = 3;
 
 	/**
+	 * Privacy setting: Accept snaps from everyone.
+	 */
+	const PRIVACY_EVERYONE = 0;
+
+	/**
+	 * Privacy setting: Accept snaps only from friends.
+	 */
+	const PRIVACY_FRIENDS = 1;
+
+	/**
 	 * Sets up some initial variables.
 	 */
 	public function __construct() {
@@ -444,5 +454,38 @@ class Snapchat extends SnapchatAPI {
 		}
 
 		return $friends;
+	}
+
+	/**
+	 * Updates the current user's privacy setting.
+	 *
+	 * @param $setting
+	 *   The privacy setting, i.e. PRIVACY_EVERYONE or PRIVACY_FRIENDS.
+	 *
+	 * @return
+	 *   TRUE on success or FALSE on failure.
+	 */
+	function updatePrivacy($setting) {
+		// Make sure we're logged in and have a valid access token.
+	 	if (!$this->auth_token || !$this->username) {
+	 		return FALSE;
+		}
+
+		$timestamp = parent::timestamp();
+		$result = parent::post(
+			'/settings',
+			array(
+				'action' => 'updatePrivacy',
+				'privacySetting' => $setting,
+				'timestamp' => $timestamp,
+				'username' => $this->username,
+			),
+			array(
+				$this->auth_token,
+				$timestamp,
+			)
+		);
+
+		return $result->param == $setting;
 	}
 }
