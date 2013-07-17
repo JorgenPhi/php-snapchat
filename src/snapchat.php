@@ -403,4 +403,46 @@ class Snapchat extends SnapchatAPI {
 
 		return is_null($result);
 	}
+
+	/**
+	 * Gets the best friends and scores of the specified users.
+	 *
+	 * @param $friends
+	 *   An array of usernames of the friends for which to retrieve best friend
+	 *   information.
+	 *
+	 * @return
+	 *   An associative array keyed by username or FALSE on failure.
+	 */
+	function getBests($friends) {
+		// Make sure we're logged in and have a valid access token.
+	 	if (!$this->auth_token || !$this->username) {
+	 		return FALSE;
+		}
+
+		$timestamp = parent::timestamp();
+		$result = parent::post(
+			'/bests',
+			array(
+				'friend_usernames' => json_encode($friends),
+				'timestamp' => $timestamp,
+				'username' => $this->username,
+			),
+			array(
+				$this->auth_token,
+				$timestamp,
+			)
+		);
+
+		if (empty($result)) {
+			return FALSE;
+		}
+
+		$friends = array();
+		foreach((array) $result as $friend => $bests) {
+			$friends[$friend] = (array) $bests;
+		}
+
+		return $friends;
+	}
 }
