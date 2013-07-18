@@ -37,6 +37,16 @@ class Snapchat extends SnapchatAPI {
 	const STATUS_SCREENSHOT = 3;
 
 	/**
+	 * Friend status: Confirmed.
+	 */
+	const FRIEND_CONFIRMED = 0;
+
+	/**
+	 * Friend status: Unconfirmed.
+	 */
+	const FRIEND_UNCONFIRMED = 1;
+
+	/**
 	 * Privacy setting: Accept snaps from everyone.
 	 */
 	const PRIVACY_EVERYONE = 0;
@@ -196,6 +206,140 @@ class Snapchat extends SnapchatAPI {
 		}
 
 		return $snaps;
+	}
+
+	/**
+	 * Gets the user's friends.
+	 *
+	 * @param $since
+	 *   (optional) When specified, only friends added after this timestamp
+	 *   will be returned.
+	 *
+	 * @return
+	 *   An array of friends or FALSE on failure.
+	 *
+	 * @see self::getUpdates()
+	 */
+	public function getFriends($since = 0) {
+		$updates = $this->getUpdates($since);
+
+		if (!$updates) {
+			return FALSE;
+		}
+
+		return $updates->friends;
+	}
+
+	/**
+	 * Gets the user's added friends.
+	 *
+	 * @param $since
+	 *   (optional) When specified, only friends who sent a request or were
+	 *   requested after this timestamp will be returned.
+	 *
+	 * @return
+	 *   An array of friends or FALSE on failure.
+	 *
+	 * @see self::getUpdates()
+	 */
+	public function getAddedFriends($since = 0) {
+		$updates = $this->getUpdates($since);
+
+		if (!$updates) {
+			return FALSE;
+		}
+
+		return $updates->added_friends;
+	}
+
+	/**
+	 * Adds friends.
+	 *
+	 * @param $usernames
+	 *   An array of usernames to add as friends.
+	 *
+	 * @return
+	 *   TRUE if successful, FALSE otherwise.
+	 */
+	public function addFriends($usernames) {
+		// Make sure we're logged in and have a valid access token.
+	 	if (!$this->auth_token || !$this->username) {
+	 		return FALSE;
+		}
+
+		$friends = array();
+		foreach ($usernames as $username) {
+			$friends[] = (object) array(
+				'display' => '',
+				'name' => $username,
+				'type' => self::FRIEND_UNCONFIRMED,
+			);
+		}
+
+		$timestamp = parent::timestamp();
+		$result = parent::post(
+			'/friend',
+			array(
+				'action' => 'multiadddelete',
+				'friend' => json_encode(array(
+					'friendsToAdd' => $friends,
+					'friendsToDelete' => array(),
+				)),
+				'timestamp' => $timestamp,
+				'username' => $this->username,
+			),
+			array(
+				$this->auth_token,
+				$timestamp,
+			)
+		);
+
+		return !empty($result->message);
+	}
+
+	/**
+	 * Deletes friends.
+	 *
+	 * @param $usernames
+	 *   An array of usernames of friends to delete.
+	 *
+	 * @return
+	 *   TRUE if successful, FALSE otherwise.
+	 */
+	public function deleteFriends($usernames) {
+		// Make sure we're logged in and have a valid access token.
+	 	if (!$this->auth_token || !$this->username) {
+	 		return FALSE;
+		}
+
+		$friends = array();
+		foreach ($usernames as $username) {
+			$friends[] = (object) array(
+				'display' => '',
+				'name' => $username,
+				'type' => self::FRIEND_CONFIRMED,
+			);
+		}
+
+		$timestamp = parent::timestamp();
+		$result = parent::post(
+			'/friend',
+			array(
+				'action' => 'multiadddelete',
+				'friend' => json_encode(array(
+					'friendsToAdd' => array(),
+					'friendsToDelete' => $friends,
+				)),
+				'timestamp' => $timestamp,
+				'username' => $this->username,
+			),
+			array(
+				$this->auth_token,
+				$timestamp,
+			)
+		);
+
+		return !empty($result->message);
 	}
 
 	/**
