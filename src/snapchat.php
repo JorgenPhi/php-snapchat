@@ -343,6 +343,42 @@ class Snapchat extends SnapchatAPI {
 	}
 
 	/**
+	 * Sets a friend's display name.
+	 *
+	 * @param $username
+	 *   The username of the user to modify.
+	 * @param $display
+	 *   The display name.
+	 *
+	 * @return
+	 *   TRUE if successful, FALSE otherwise.
+	 */
+	public function setDisplayName($username, $display) {
+		// Make sure we're logged in and have a valid access token.
+	 	if (!$this->auth_token || !$this->username) {
+	 		return FALSE;
+		}
+
+		$timestamp = parent::timestamp();
+		$result = parent::post(
+			'/friend',
+			array(
+				'action' => 'display',
+				'display' => $display,
+				'friend' => $username,
+				'timestamp' => $timestamp,
+				'username' => $this->username,
+			),
+			array(
+				$this->auth_token,
+				$timestamp,
+			)
+		);
+
+		return !empty($result->message);
+	}
+
+	/**
 	 * Blocks a user.
 	 *
 	 * @param $username
@@ -668,6 +704,34 @@ class Snapchat extends SnapchatAPI {
 	}
 
 	/**
+	 * Clears the current user's feed.
+	 *
+	 * @return
+	 *   TRUE on success or FALSE on failure.
+	 */
+	function clearFeed() {
+		// Make sure we're logged in and have a valid access token.
+	 	if (!$this->auth_token || !$this->username) {
+	 		return FALSE;
+		}
+
+		$timestamp = parent::timestamp();
+		$result = parent::post(
+			'/clear',
+			array(
+				'timestamp' => $timestamp,
+				'username' => $this->username,
+			),
+			array(
+				$this->auth_token,
+				$timestamp,
+			)
+		);
+
+		return is_null($result);
+	}
+
+	/**
 	 * Updates the current user's privacy setting.
 	 *
 	 * @param $setting
@@ -688,6 +752,39 @@ class Snapchat extends SnapchatAPI {
 			array(
 				'action' => 'updatePrivacy',
 				'privacySetting' => $setting,
+				'timestamp' => $timestamp,
+				'username' => $this->username,
+			),
+			array(
+				$this->auth_token,
+				$timestamp,
+			)
+		);
+
+		return $result->param == $setting;
+	}
+
+	/**
+	 * Updates the current user's email address.
+	 *
+	 * @param $email
+	 *   The new email address.
+	 *
+	 * @return
+	 *   TRUE on success or FALSE on failure.
+	 */
+	function updateEmail($email) {
+		// Make sure we're logged in and have a valid access token.
+	 	if (!$this->auth_token || !$this->username) {
+	 		return FALSE;
+		}
+
+		$timestamp = parent::timestamp();
+		$result = parent::post(
+			'/settings',
+			array(
+				'action' => 'updateEmail',
+				'email' => $email,
 				'timestamp' => $timestamp,
 				'username' => $this->username,
 			),
