@@ -343,6 +343,73 @@ class Snapchat extends SnapchatAPI {
 	}
 
 	/**
+	 * Blocks a user.
+	 *
+	 * @param $username
+	 *   The username to be blocked.
+	 *
+	 * @return
+	 *   TRUE if successful, FALSE otherwise.
+	 */
+	public function block($username) {
+		// Make sure we're logged in and have a valid access token.
+	 	if (!$this->auth_token || !$this->username) {
+	 		return FALSE;
+		}
+
+		$timestamp = parent::timestamp();
+		$result = parent::post(
+			'/friend',
+			array(
+				'action' => 'block',
+				'friend' => $username,
+				'timestamp' => $timestamp,
+				'username' => $this->username,
+			),
+			array(
+				$this->auth_token,
+				$timestamp,
+			)
+		);
+
+		return !empty($result->message);
+	}
+
+	/**
+	 * Unblocks a user.
+	 *
+	 * @param $username
+	 *   The username to be unblocked.
+	 *
+	 * @return
+	 *   TRUE if successful, FALSE otherwise.
+	 */
+	public function unblock($username) {
+		// Make sure we're logged in and have a valid access token.
+	 	if (!$this->auth_token || !$this->username) {
+	 		return FALSE;
+		}
+
+		$timestamp = parent::timestamp();
+		$result = parent::post(
+			'/friend',
+			array(
+				'action' => 'unblock',
+				'friend' => $username,
+				'timestamp' => $timestamp,
+				'username' => $this->username,
+			),
+			array(
+				$this->auth_token,
+				$timestamp,
+			)
+		);
+
+		return !empty($result->message);
+	}
+
+
+	/**
 	 * Downloads a snap.
 	 *
 	 * @param $id
