@@ -15,7 +15,9 @@ Usage
 
 Include src/snapchat.php via require_once or Composer or whatever, then:
 
-```
+```php
+<?php
+
 $snapchat = new Snapchat();
 
 // Log in:
@@ -58,6 +60,8 @@ $snapchat->updatePrivacy(Snapchat::PRIVACY_FRIENDS);
 
 // Log out:
 $snapchat->logout();
+
+?>
 ```
 
 
