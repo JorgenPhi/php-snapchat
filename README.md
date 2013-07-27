@@ -18,10 +18,9 @@ Include src/snapchat.php via require_once or Composer or whatever, then:
 ```php
 <?php
 
-$snapchat = new Snapchat();
-
 // Log in:
-$snapchat->login('username', 'password');
+$snapchat = new Snapchat('username', 'password');
+
 
 // Get your feed:
 $snaps = $snapchat->getSnaps();
