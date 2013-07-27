@@ -59,9 +59,11 @@ class Snapchat extends SnapchatAPI {
 	/**
 	 * Sets up some initial variables.
 	 */
-	public function __construct() {
+	public function __construct($username, $password) {
 		$this->auth_token = FALSE;
 		$this->username = FALSE;
+		
+		$this->login($username, $password);
 	}
 
 	/**
