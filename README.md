@@ -26,7 +26,7 @@ $snapchat = new Snapchat('username', 'password');
 $snaps = $snapchat->getSnaps();
 
 // Download a specific snap:
-$data = getMedia('122FAST2FURIOUS334r');
+$data = $snapchat->getMedia('122FAST2FURIOUS334r');
 file_put_contents('/home/dan/snap.jpg', $data);
 
 // Mark the snap as viewed:
