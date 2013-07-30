@@ -48,8 +48,7 @@ class Snapchat {
 	/**
 	 * Returns the current timestamp.
 	 *
-	 * @return
-	 *   The current timestamp, expressed in milliseconds since epoch.
+	 * @return The current timestamp, expressed in milliseconds since epoch.
 	 */
 	public function timestamp() {
 		return round(microtime(TRUE) * 1000);
@@ -59,13 +58,9 @@ class Snapchat {
 	/**
 	 * Pads data using PKCS5.
 	 *
-	 * @param $data
-	 *   The data to be padded.
-	 * @param $blocksize
-	 *   The block size to pad to. Defaults to 16.
-	 *
-	 * @return
-	 *   The padded data.
+	 * @param $data The data to be padded.
+	 * @param $blocksize The block size to pad to. Defaults to 16.
+	 * @return The padded data.
 	 */
 	public function pad($data, $blocksize = 16) {
 		$pad = $blocksize - (strlen($data) % $blocksize);
@@ -76,13 +71,8 @@ class Snapchat {
 	/**
 	 * Decrypts blob data.
 	 *
-	 * @param $data
-	 *   The data to decrypt.
-	 *
-	 * @return
-	 *   The decrypted data.
-	 *
-	 * @see SnapchatAPI::encrypt()
+	 * @param $data The data to decrypt.
+	 * @return The decrypted data.
 	 */
 	public function decrypt($data) {
 		return mcrypt_decrypt(MCRYPT_RIJNDAEL_128, self::BLOB_ENCRYPTION_KEY, self::pad($data), MCRYPT_MODE_ECB);
@@ -92,13 +82,8 @@ class Snapchat {
 	/**
 	 * Encrypts blob data.
 	 *
-	 * @param $data
-	 *   The data to encrypt.
-	 *
-	 * @return
-	 *   The encrypted data.
-	 *
-	 * @see SnapchatAPI::decrypt()
+	 * @param $data The data to encrypt.
+	 * @return The encrypted data.
 	 */
 	public function encrypt($data) {
 		return mcrypt_encrypt(MCRYPT_RIJNDAEL_128, self::BLOB_ENCRYPTION_KEY, self::pad($data), MCRYPT_MODE_ECB);
@@ -108,13 +93,9 @@ class Snapchat {
 	/**
 	 * Implementation of Snapchat's obscure hashing algorithm.
 	 *
-	 * @param $first
-	 *   The first value to use in the hash.
-	 * @param $second
-	 *   The second value to use in the hash.
-	 *
-	 * @return
-	 *   The hash.
+	 * @param $firstThe first value to use in the hash.
+	 * @param $second The second value to use in the hash.
+	 * @return The hash.
 	 */
 	public function hash($first, $second) {
 		// Append the secret to the values.
@@ -142,11 +123,8 @@ class Snapchat {
 	/**
 	 * Checks to see if a blob looks like a media file.
 	 *
-	 * @param $blob
-	 *   The blob data (or just the header).
-	 *
-	 * @return
-	 *   TRUE if it's a media file, FALSE if it's not.
+	 * @param $blob The blob data (or just the header).
+	 * @return TRUE if it's a media file, FALSE if it's not.
 	 */
 	function is_media($blob) {
 		// Check for a JPG header.
@@ -169,21 +147,11 @@ class Snapchat {
 	 * Snapchat appears to only use POST for API requests, so this is really
 	 * the only function used to query the API.
 	 *
-	 * @param $endpoint
-	 *   The address of the resource being requested (e.g. '/update_snaps' or
-	 *   '/friend').
-	 * @param $data
-	 *   An associative array of values to send to the API. A request token is
-	 *   added automatically.
-	 * @param $params
-	 *   An array containing the parameters used to generate the request token.
-	 * @param $multipart
-	 *   (optional) If TRUE, sends the request as multipart/form-data. Defaults
-	 *   to FALSE.
-	 *
-	 * @return
-	 *   The data returned from the API (decoded if JSON). Returns FALSE if the
-	 *   request failed.
+	 * @param $endpoint The address of the resource being requested (e.g. '/update_snaps' or '/friend').
+	 * @param $data An associative array of values to send to the API. A request token is added automatically.
+	 * @param $params An array containing the parameters used to generate the request token.
+	 * @param $multipart (optional) If TRUE, sends the request as multipart/form-data. Defaults to FALSE.
+	 * @return The data returned from the API (decoded if JSON). Returns FALSE if the request failed.
 	 */
 	public function post($endpoint, $data, $params, $multipart = FALSE) {
 		$ch = curl_init();
@@ -221,14 +189,9 @@ class Snapchat {
 	/**
 	 * Handles login.
 	 *
-	 * @param $username
-	 *   The username for the Snapchat account.
-	 * @param $password
-	 *   The password associated with the username.
-	 *
-	 * @return
-	 *   The data returned by the service. Generally, returns the same result
-	 *   as calling self::getUpdates().
+	 * @param $username The username for the Snapchat account.
+	 * @param $password The password associated with the username.
+	 * @return The data returned by the service. Generally, returns the same result as calling self::getUpdates().
 	 */
 	public function login($username, $password) {
 		$timestamp = self::timestamp();
@@ -262,8 +225,7 @@ class Snapchat {
 	/**
 	 * Logs out the current user.
 	 *
-	 * @return
-	 *   TRUE if successful, FALSE otherwise.
+	 * @return TRUE if successful, FALSE otherwise.
 	 */
 	public function logout() {
 		// Make sure we're logged in and have a valid access token.
@@ -291,12 +253,8 @@ class Snapchat {
 	/**
  	 * Retrieves general user, friend, and snap updates.
 	 *
-	 * @param $since
-	 *   (optional) The maximum age of the updates to be fetched in seconds
-	 *   since epoch. Defaults to 0 because we generally want them all.
- 	 *
- 	 * @return
- 	 *   The data returned by the service or FALSE on failure.
+	 * @param $since (optional) The maximum age of the updates to be fetched in seconds since epoch. Defaults to 0 because we generally want them all.
+ 	 * @return The data returned by the service or FALSE on failure.
  	 */
 	public function getUpdates($since = 0) {
 		// Make sure we're logged in and have a valid access token.
@@ -330,14 +288,8 @@ class Snapchat {
 	/**
 	 * Gets the user's snaps.
 	 *
-	 * @param $since
-	 *   (optional) The maximum age of the snaps to be fetched in seconds
-	 *   since epoch.
-	 *
-	 * @return
-	 *   An array of snaps or FALSE on failure.
-	 *
-	 * @see self::getUpdates()
+	 * @param $since (optional) The maximum age of the snaps to be fetched in seconds since epoch.
+	 * @return An array of snaps or FALSE on failure.
 	 */
 	public function getSnaps($since = 0) {
 		$updates = $this->getUpdates($since);
@@ -369,14 +321,8 @@ class Snapchat {
 	/**
 	 * Gets the user's friends.
 	 *
-	 * @param $since
-	 *   (optional) When specified, only friends added after this timestamp
-	 *   will be returned.
-	 *
-	 * @return
-	 *   An array of friends or FALSE on failure.
-	 *
-	 * @see self::getUpdates()
+	 * @param $since (optional) When specified, only friends added after this timestamp will be returned.
+	 * @return An array of friends or FALSE on failure.
 	 */
 	public function getFriends($since = 0) {
 		$updates = $this->getUpdates($since);
@@ -392,14 +338,8 @@ class Snapchat {
 	/**
 	 * Gets the user's added friends.
 	 *
-	 * @param $since
-	 *   (optional) When specified, only friends who sent a request or were
-	 *   requested after this timestamp will be returned.
-	 *
-	 * @return
-	 *   An array of friends or FALSE on failure.
-	 *
-	 * @see self::getUpdates()
+	 * @param $since (optional) When specified, only friends who sent a request or were requested after this timestamp will be returned.
+	 * @return An array of friends or FALSE on failure.
 	 */
 	public function getAddedFriends($since = 0) {
 		$updates = $this->getUpdates($since);
@@ -415,11 +355,8 @@ class Snapchat {
 	/**
 	 * Adds friends.
 	 *
-	 * @param $usernames
-	 *   An array of usernames to add as friends.
-	 *
-	 * @return
-	 *   TRUE if successful, FALSE otherwise.
+	 * @param $usernames An array of usernames to add as friends.
+	 * @return TRUE if successful, FALSE otherwise.
 	 */
 	public function addFriends($usernames) {
 		// Make sure we're logged in and have a valid access token.
@@ -461,11 +398,8 @@ class Snapchat {
 	/**
 	 * Deletes friends.
 	 *
-	 * @param $usernames
-	 *   An array of usernames of friends to delete.
-	 *
-	 * @return
-	 *   TRUE if successful, FALSE otherwise.
+	 * @param $usernames An array of usernames of friends to delete.
+	 * @return TRUE if successful, FALSE otherwise.
 	 */
 	public function deleteFriends($usernames) {
 		// Make sure we're logged in and have a valid access token.
@@ -507,13 +441,9 @@ class Snapchat {
 	/**
 	 * Sets a friend's display name.
 	 *
-	 * @param $username
-	 *   The username of the user to modify.
-	 * @param $display
-	 *   The display name.
-	 *
-	 * @return
-	 *   TRUE if successful, FALSE otherwise.
+	 * @param $username The username of the user to modify.
+	 * @param $display The display name.
+	 * @return TRUE if successful, FALSE otherwise.
 	 */
 	public function setDisplayName($username, $display) {
 		// Make sure we're logged in and have a valid access token.
@@ -544,11 +474,8 @@ class Snapchat {
 	/**
 	 * Blocks a user.
 	 *
-	 * @param $username
-	 *   The username to be blocked.
-	 *
-	 * @return
-	 *   TRUE if successful, FALSE otherwise.
+	 * @param $username The username to be blocked.
+	 * @return TRUE if successful, FALSE otherwise.
 	 */
 	public function block($username) {
 		// Make sure we're logged in and have a valid access token.
@@ -578,11 +505,8 @@ class Snapchat {
 	/**
 	 * Unblocks a user.
 	 *
-	 * @param $username
-	 *   The username to be unblocked.
-	 *
-	 * @return
-	 *   TRUE if successful, FALSE otherwise.
+	 * @param $username The username to be unblocked.
+	 * @return TRUE if successful, FALSE otherwise.
 	 */
 	public function unblock($username) {
 		// Make sure we're logged in and have a valid access token.
@@ -612,11 +536,8 @@ class Snapchat {
 	/**
 	 * Downloads a snap.
 	 *
-	 * @param $id
-	 *   The snap ID.
-	 *
-	 * @return
-	 *   The snap data or FALSE on failure.
+	 * @param $id The snap ID.
+	 * @return The snap data or FALSE on failure.
 	 */
 	public function getMedia($id) {
 		// Make sure we're logged in and have a valid access token.
@@ -656,16 +577,9 @@ class Snapchat {
 	/**
 	 * Sends event information to Snapchat.
 	 *
-	 * @param $events
-	 *   An array of events to send to Snapchat (generally usage data).
-	 * @param $snap_info
-	 *   (optional) Data to send along in addition to the event array. This is
-	 *   used by the app to mark snaps as viewed. Defaults to an empty object.
-	 *
-	 * @return
-	 *   TRUE on success, FALSE on failure.
-	 *
-	 * @see self::markSnapViewed()
+	 * @param $events An array of events to send to Snapchat (generally usage data).
+	 * @param $snap_info (optional) Data to send along in addition to the event array. This is used by the app to mark snaps as viewed. Defaults to an empty object.
+	 * @return TRUE on success, FALSE on failure.
 	 */
 	public function sendEvents($events, $snap_info = array()) {
 		// Make sure we're logged in and have a valid access token.
@@ -702,13 +616,9 @@ class Snapchat {
 	 * as long as you know the ID. This hasn't been tested thoroughly, but it
 	 * could be useful if you send a snap that you immediately regret.
 	 *
-	 * @param $id
-	 *   The snap to mark as viewed.
-	 * @param $time
-	 *   The amount of time (in seconds) the snap was viewed. Defaults to 1.
-	 *
-	 * @return
-	 *   TRUE on success, FALSE on failure.
+	 * @param $id The snap to mark as viewed.
+	 * @param $time The amount of time (in seconds) the snap was viewed. Defaults to 1.
+	 * @return TRUE on success, FALSE on failure.
 	 */
 	public function markSnapViewed($id, $time = 1) {
 		$snap_info = array(
@@ -748,13 +658,9 @@ class Snapchat {
 	/**
 	 * Uploads a file.
 	 *
-	 * @param $type
-	 *   The media type, i.e. MEDIA_IMAGE or MEDIA_VIDEO.
-	 * @param $data
-	 *   The file data to upload.
-	 *
-	 * @return
-	 *   The media ID or FALSE on failure.
+	 * @param $type The media type, i.e. MEDIA_IMAGE or MEDIA_VIDEO.
+	 * @param $data The file data to upload.
+	 * @return The media ID or FALSE on failure.
 	 */
 	function upload($type, $data) {
 		// Make sure we're logged in and have a valid access token.
@@ -793,16 +699,10 @@ class Snapchat {
 	/**
 	 * Sends a snap.
 	 *
-	 * @param $media_id
-	 *   The media ID of the snap to send.
-	 * @param $recipients
-	 *   An array of recipients.
-	 * @param $time
-	 *   (optional) The time in seconds the snap should be available (1-10).
-	 *   Defaults to 3.
-	 *
-	 * @return
-	 *   TRUE on success or FALSE on failure.
+	 * @param $media_id The media ID of the snap to send.
+	 * @param $recipients An array of recipients.
+	 * @param $time (optional) The time in seconds the snap should be available (1-10). Defaults to 3.
+	 * @return TRUE on success or FALSE on failure.
 	 */
 	function send($media_id, $recipients, $time = 3) {
 		// Make sure we're logged in and have a valid access token.
@@ -833,12 +733,8 @@ class Snapchat {
 	/**
 	 * Gets the best friends and scores of the specified users.
 	 *
-	 * @param $friends
-	 *   An array of usernames of the friends for which to retrieve best friend
-	 *   information.
-	 *
-	 * @return
-	 *   An associative array keyed by username or FALSE on failure.
+	 * @param $friends An array of usernames of the friends for which to retrieve best friend information.
+	 * @return An associative array keyed by username or FALSE on failure.
 	 */
 	function getBests($friends) {
 		// Make sure we're logged in and have a valid access token.
@@ -876,8 +772,7 @@ class Snapchat {
 	/**
 	 * Clears the current user's feed.
 	 *
-	 * @return
-	 *   TRUE on success or FALSE on failure.
+	 * @return TRUE on success or FALSE on failure.
 	 */
 	function clearFeed() {
 		// Make sure we're logged in and have a valid access token.
@@ -905,11 +800,8 @@ class Snapchat {
 	/**
 	 * Updates the current user's privacy setting.
 	 *
-	 * @param $setting
-	 *   The privacy setting, i.e. PRIVACY_EVERYONE or PRIVACY_FRIENDS.
-	 *
-	 * @return
-	 *   TRUE on success or FALSE on failure.
+	 * @param $setting The privacy setting, i.e. PRIVACY_EVERYONE or PRIVACY_FRIENDS.
+	 * @return TRUE on success or FALSE on failure.
 	 */
 	function updatePrivacy($setting) {
 		// Make sure we're logged in and have a valid access token.
@@ -939,11 +831,8 @@ class Snapchat {
 	/**
 	 * Updates the current user's email address.
 	 *
-	 * @param $email
-	 *   The new email address.
-	 *
-	 * @return
-	 *   TRUE on success or FALSE on failure.
+	 * @param $email The new email address.
+	 * @return TRUE on success or FALSE on failure.
 	 */
 	function updateEmail($email) {
 		// Make sure we're logged in and have a valid access token.
