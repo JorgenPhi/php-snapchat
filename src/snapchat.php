@@ -5,86 +5,22 @@
  */
 class Snapchat {
 
-
-	/**
-	 * App version.
-	 */
-	const VERSION = '5.0.1';
-
-	/**
-	 * API URL.
-	 */
-	const URL = 'https://feelinsonice-hrd.appspot.com/bq';
-
-	/**
-	 * API secret.
-	 */
-	const SECRET = 'iEk21fuwZApXlz93750dmW22pw389dPwOk';
-
-	/**
-	 * API static token.
-	 */
-	const STATIC_TOKEN = 'm198sOkJEn37DjqZ32lpRu76xmw288xSQ9';
-
-	/**
-	 * Blob encryption key.
-	 */
-	const BLOB_ENCRYPTION_KEY = 'M02cnQ51Ji97vwT4';
-
-	/**
-	 * Hash pattern.
-	 */
-	const HASH_PATTERN = '0001110111101110001111010101111011010001001110011000110001000110';
-
-	/**
-	 * Media type: Image.
-	 */
-	const MEDIA_IMAGE = 0;
-
-	/**
-	 * Media type: Video.
-	 */
-	const MEDIA_VIDEO = 1;
-
-	/**
-	 * Snap status: Sent.
-	 */
-	const STATUS_SENT = 0;
-
-	/**
-	 * Snap status: Delivered.
-	 */
-	const STATUS_DELIVERED = 1;
-
-	/**
-	 * Snap status: Opened.
-	 */
-	const STATUS_OPENED = 2;
-
-	/**
-	 * Snap status: Screenshot.
-	 */
-	const STATUS_SCREENSHOT = 3;
-
-	/**
-	 * Friend status: Confirmed.
-	 */
-	const FRIEND_CONFIRMED = 0;
-
-	/**
-	 * Friend status: Unconfirmed.
-	 */
-	const FRIEND_UNCONFIRMED = 1;
-
-	/**
-	 * Privacy setting: Accept snaps from everyone.
-	 */
-	const PRIVACY_EVERYONE = 0;
-
-	/**
-	 * Privacy setting: Accept snaps only from friends.
-	 */
-	const PRIVACY_FRIENDS = 1;
+	const VERSION = '1.2.10'; // App version
+	const URL = 'https://feelinsonice-hrd.appspot.com/bq'; // API URL
+	const SECRET = 'iEk21fuwZApXlz93750dmW22pw389dPwOk'; // API secret
+	const STATIC_TOKEN = 'm198sOkJEn37DjqZ32lpRu76xmw288xSQ9'; // API static token
+	const BLOB_ENCRYPTION_KEY = 'M02cnQ51Ji97vwT4'; // Blob encryption key
+	const HASH_PATTERN = '0001110111101110001111010101111011010001001110011000110001000110'; // Hash pattern
+	const MEDIA_IMAGE = 0; // Media type: Image
+	const MEDIA_VIDEO = 1; // Media type: Video
+	const STATUS_SENT = 0; // Snap status: Sent
+	const STATUS_DELIVERED = 1; // Snap status: Delivered
+	const STATUS_OPENED = 2; // Snap status: Opened
+	const STATUS_SCREENSHOT = 3; // Snap status: Screenshot
+	const FRIEND_CONFIRMED = 0; // Friend status: Confirmed
+	const FRIEND_UNCONFIRMED = 1; // Friend status: Unconfirmed
+	const PRIVACY_EVERYONE = 0; // Privacy setting: Accept snaps from everyone
+	const PRIVACY_FRIENDS = 1; // Privacy setting: Accept snaps only from friends
 
 
 	/**
