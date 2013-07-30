@@ -5,6 +5,7 @@
  */
 class Snapchat {
 
+
 	/**
 	 * App version.
 	 */
@@ -85,6 +86,7 @@ class Snapchat {
 	 */
 	const PRIVACY_FRIENDS = 1;
 
+
 	/**
 	 * Sets up some initial variables.
 	 */
@@ -94,6 +96,7 @@ class Snapchat {
 		
 		$this->login($username, $password);
 	}
+
 
 	/**
 	 * Default curl options.
@@ -105,6 +108,7 @@ class Snapchat {
 		CURLOPT_USERAGENT => 'Snapchat/5.0.1 CFNetwork/609.1.4 Darwin/13.0.0',
 	);
 
+
 	/**
 	 * Returns the current timestamp.
 	 *
@@ -114,6 +118,7 @@ class Snapchat {
 	public function timestamp() {
 		return round(microtime(TRUE) * 1000);
 	}
+
 
 	/**
 	 * Pads data using PKCS5.
@@ -131,6 +136,7 @@ class Snapchat {
 		return $data . str_repeat(chr($pad), $pad);
 	}
 
+
 	/**
 	 * Decrypts blob data.
 	 *
@@ -146,6 +152,7 @@ class Snapchat {
 		return mcrypt_decrypt(MCRYPT_RIJNDAEL_128, self::BLOB_ENCRYPTION_KEY, self::pad($data), MCRYPT_MODE_ECB);
 	}
 
+
 	/**
 	 * Encrypts blob data.
 	 *
@@ -160,6 +167,7 @@ class Snapchat {
 	public function encrypt($data) {
 		return mcrypt_encrypt(MCRYPT_RIJNDAEL_128, self::BLOB_ENCRYPTION_KEY, self::pad($data), MCRYPT_MODE_ECB);
 	}
+
 
 	/**
 	 * Implementation of Snapchat's obscure hashing algorithm.
@@ -194,6 +202,7 @@ class Snapchat {
 		return $result;
 	}
 
+
 	/**
 	 * Checks to see if a blob looks like a media file.
 	 *
@@ -216,6 +225,7 @@ class Snapchat {
 
 		return FALSE;
 	}
+
 
 	/**
 	 * Runs a POST request against the API.
@@ -271,6 +281,7 @@ class Snapchat {
 		return json_last_error() == JSON_ERROR_NONE ? $data : $result;
 	}
 
+
 	/**
 	 * Handles login.
 	 *
@@ -311,6 +322,7 @@ class Snapchat {
  		return $result;
 	}
 
+
 	/**
 	 * Logs out the current user.
 	 *
@@ -338,6 +350,7 @@ class Snapchat {
 
  	 	return is_null($result);
 	}
+
 
 	/**
  	 * Retrieves general user, friend, and snap updates.
@@ -377,6 +390,7 @@ class Snapchat {
  		return $result;
 	}
 
+
 	/**
 	 * Gets the user's snaps.
 	 *
@@ -415,6 +429,7 @@ class Snapchat {
 		return $snaps;
 	}
 
+
 	/**
 	 * Gets the user's friends.
 	 *
@@ -437,6 +452,7 @@ class Snapchat {
 		return $updates->friends;
 	}
 
+
 	/**
 	 * Gets the user's added friends.
 	 *
@@ -458,6 +474,7 @@ class Snapchat {
 
 		return $updates->added_friends;
 	}
+
 
 	/**
 	 * Adds friends.
@@ -504,6 +521,7 @@ class Snapchat {
 		return !empty($result->message);
 	}
 
+
 	/**
 	 * Deletes friends.
 	 *
@@ -549,6 +567,7 @@ class Snapchat {
 		return !empty($result->message);
 	}
 
+
 	/**
 	 * Sets a friend's display name.
 	 *
@@ -585,6 +604,7 @@ class Snapchat {
 		return !empty($result->message);
 	}
 
+
 	/**
 	 * Blocks a user.
 	 *
@@ -617,6 +637,7 @@ class Snapchat {
 
 		return !empty($result->message);
 	}
+
 
 	/**
 	 * Unblocks a user.
@@ -695,6 +716,7 @@ class Snapchat {
 		return FALSE;
 	}
 
+
 	/**
 	 * Sends event information to Snapchat.
 	 *
@@ -732,6 +754,7 @@ class Snapchat {
 
 		return is_null($result);
 	}
+
 
 	/**
 	 * Marks a snap as viewed.
@@ -785,6 +808,7 @@ class Snapchat {
 		return $this->sendEvents($events, $snap_info);
 	}
 
+
 	/**
 	 * Uploads a file.
 	 *
@@ -829,6 +853,7 @@ class Snapchat {
 		return is_null($result) ? $media_id : FALSE;
 	}
 
+
 	/**
 	 * Sends a snap.
 	 *
@@ -867,6 +892,7 @@ class Snapchat {
 
 		return is_null($result);
 	}
+
 
 	/**
 	 * Gets the best friends and scores of the specified users.
@@ -910,6 +936,7 @@ class Snapchat {
 		return $friends;
 	}
 
+
 	/**
 	 * Clears the current user's feed.
 	 *
@@ -937,6 +964,7 @@ class Snapchat {
 
 		return is_null($result);
 	}
+
 
 	/**
 	 * Updates the current user's privacy setting.
@@ -971,6 +999,7 @@ class Snapchat {
 		return $result->param == $setting;
 	}
 
+
 	/**
 	 * Updates the current user's email address.
 	 *
@@ -1003,4 +1032,5 @@ class Snapchat {
 
 		return $result->param == $setting;
 	}
+
 }
