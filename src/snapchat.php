@@ -284,8 +284,8 @@ class Snapchat {
 	 *   as calling self::getUpdates().
 	 */
 	public function login($username, $password) {
-		$timestamp = parent::timestamp();
-		$result = parent::post(
+		$timestamp = self::timestamp();
+		$result = self::post(
 			'/login',
 			array(
  				'username' => $username,
@@ -293,7 +293,7 @@ class Snapchat {
 				'timestamp' => $timestamp,
 			),
 			array(
-				parent::STATIC_TOKEN,
+				self::STATIC_TOKEN,
 				$timestamp,
 			)
 		);
@@ -323,8 +323,8 @@ class Snapchat {
 	 		return FALSE;
 		}
 
-		$timestamp = parent::timestamp();
-		$result = parent::post(
+		$timestamp = self::timestamp();
+		$result = self::post(
 			'/logout',
 			array(
 				'timestamp' => $timestamp,
@@ -355,8 +355,8 @@ class Snapchat {
 	 		return FALSE;
 		}
 
-		$timestamp = parent::timestamp();
-		$result = parent::post(
+		$timestamp = self::timestamp();
+		$result = self::post(
 			'/updates',
 			array(
 				'timestamp' => $timestamp,
@@ -483,8 +483,8 @@ class Snapchat {
 			);
 		}
 
-		$timestamp = parent::timestamp();
-		$result = parent::post(
+		$timestamp = self::timestamp();
+		$result = self::post(
 			'/friend',
 			array(
 				'action' => 'multiadddelete',
@@ -528,8 +528,8 @@ class Snapchat {
 			);
 		}
 
-		$timestamp = parent::timestamp();
-		$result = parent::post(
+		$timestamp = self::timestamp();
+		$result = self::post(
 			'/friend',
 			array(
 				'action' => 'multiadddelete',
@@ -566,8 +566,8 @@ class Snapchat {
 	 		return FALSE;
 		}
 
-		$timestamp = parent::timestamp();
-		$result = parent::post(
+		$timestamp = self::timestamp();
+		$result = self::post(
 			'/friend',
 			array(
 				'action' => 'display',
@@ -600,8 +600,8 @@ class Snapchat {
 	 		return FALSE;
 		}
 
-		$timestamp = parent::timestamp();
-		$result = parent::post(
+		$timestamp = self::timestamp();
+		$result = self::post(
 			'/friend',
 			array(
 				'action' => 'block',
@@ -633,8 +633,8 @@ class Snapchat {
 	 		return FALSE;
 		}
 
-		$timestamp = parent::timestamp();
-		$result = parent::post(
+		$timestamp = self::timestamp();
+		$result = self::post(
 			'/friend',
 			array(
 				'action' => 'unblock',
@@ -667,8 +667,8 @@ class Snapchat {
 	 		return FALSE;
 		}
 
-		$timestamp = parent::timestamp();
-		$result = parent::post(
+		$timestamp = self::timestamp();
+		$result = self::post(
 			'/blob',
 			array(
 				'id' => $id,
@@ -681,13 +681,13 @@ class Snapchat {
 			)
 		);
 
-		if (parent::is_media(substr($result, 0, 2))) {
+		if (self::is_media(substr($result, 0, 2))) {
 			return $result;
 		}
 		else {
-			$result = parent::decrypt($result);
+			$result = self::decrypt($result);
 
-			if (parent::is_media(substr($result, 0, 2))) {
+			if (self::is_media(substr($result, 0, 2))) {
 				return $result;
 			}
 		}
@@ -715,8 +715,8 @@ class Snapchat {
 	 		return FALSE;
 		}
 
-		$timestamp = parent::timestamp();
-		$result = parent::post(
+		$timestamp = self::timestamp();
+		$result = self::post(
 			'/update_snaps',
 			array(
 				'events' => json_encode($events),
@@ -804,13 +804,13 @@ class Snapchat {
 
 		// To make cURL happy, we write the data to a file first.
 		$temp = tempnam(sys_get_temp_dir(), 'Snap');
-		file_put_contents($temp, parent::encrypt($data));
+		file_put_contents($temp, self::encrypt($data));
 
 		// For the adventurous: What happens when you upload more than one snap
 		// per second?
 		$media_id = strtoupper($this->username) . time();
-		$timestamp = parent::timestamp();
-		$result = parent::post(
+		$timestamp = self::timestamp();
+		$result = self::post(
 			'/upload',
 			array(
 				'media_id' => $media_id,
@@ -849,8 +849,8 @@ class Snapchat {
 	 		return FALSE;
 		}
 
-		$timestamp = parent::timestamp();
-		$result = parent::post(
+		$timestamp = self::timestamp();
+		$result = self::post(
 			'/send',
 			array(
 				'media_id' => $media_id,
@@ -884,8 +884,8 @@ class Snapchat {
 	 		return FALSE;
 		}
 
-		$timestamp = parent::timestamp();
-		$result = parent::post(
+		$timestamp = self::timestamp();
+		$result = self::post(
 			'/bests',
 			array(
 				'friend_usernames' => json_encode($friends),
@@ -922,8 +922,8 @@ class Snapchat {
 	 		return FALSE;
 		}
 
-		$timestamp = parent::timestamp();
-		$result = parent::post(
+		$timestamp = self::timestamp();
+		$result = self::post(
 			'/clear',
 			array(
 				'timestamp' => $timestamp,
@@ -953,8 +953,8 @@ class Snapchat {
 	 		return FALSE;
 		}
 
-		$timestamp = parent::timestamp();
-		$result = parent::post(
+		$timestamp = self::timestamp();
+		$result = self::post(
 			'/settings',
 			array(
 				'action' => 'updatePrivacy',
@@ -986,8 +986,8 @@ class Snapchat {
 	 		return FALSE;
 		}
 
-		$timestamp = parent::timestamp();
-		$result = parent::post(
+		$timestamp = self::timestamp();
+		$result = self::post(
 			'/settings',
 			array(
 				'action' => 'updateEmail',
