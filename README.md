@@ -15,17 +15,18 @@ Usage
 
 Include src/snapchat.php via require_once or Composer or whatever, then:
 
-```
-$snapchat = new Snapchat();
+```php
+<?php
 
 // Log in:
-$snapchat->login('username', 'password');
+$snapchat = new Snapchat('username', 'password');
+
 
 // Get your feed:
 $snaps = $snapchat->getSnaps();
 
 // Download a specific snap:
-$data = getMedia('122FAST2FURIOUS334r');
+$data = $snapchat->getMedia('122FAST2FURIOUS334r');
 file_put_contents('/home/dan/snap.jpg', $data);
 
 // Mark the snap as viewed:
@@ -58,6 +59,8 @@ $snapchat->updatePrivacy(Snapchat::PRIVACY_FRIENDS);
 
 // Log out:
 $snapchat->logout();
+
+?>
 ```
 
 
