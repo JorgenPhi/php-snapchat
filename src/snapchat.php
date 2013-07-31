@@ -251,11 +251,11 @@ class Snapchat {
 
 
   /**
-    * Retrieves general user, friend, and snap updates.
+   * Retrieves general user, friend, and snap updates.
    *
    * @param $since (optional) The maximum age of the updates to be fetched in seconds since epoch. Defaults to 0 because we generally want them all.
-    * @return The data returned by the service or FALSE on failure.
-    */
+   * @return The data returned by the service or FALSE on failure.
+   */
   public function getUpdates($since = 0) {
     // Make sure we're logged in and have a valid access token.
      if (!$this->auth_token || !$this->username) {
