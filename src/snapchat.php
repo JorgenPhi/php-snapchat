@@ -93,7 +93,7 @@ class Snapchat {
   /**
    * Implementation of Snapchat's obscure hashing algorithm.
    *
-   * @param $firstThe first value to use in the hash.
+   * @param $first The first value to use in the hash.
    * @param $second The second value to use in the hash.
    * @return The hash.
    */
