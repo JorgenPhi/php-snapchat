@@ -5,7 +5,7 @@
  */
 class Snapchat {
 
-  const VERSION = '1.2.10'; // App version
+  const VERSION = '5.0.1'; // App version
   const URL = 'https://feelinsonice-hrd.appspot.com/bq'; // API URL
   const SECRET = 'iEk21fuwZApXlz93750dmW22pw389dPwOk'; // API secret
   const STATIC_TOKEN = 'm198sOkJEn37DjqZ32lpRu76xmw288xSQ9'; // API static token
