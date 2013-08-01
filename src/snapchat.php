@@ -124,17 +124,17 @@ class Snapchat {
    * Checks to see if a blob looks like a media file.
    *
    * @param $blob The blob data (or just the header).
-   * @return TRUE if it's a media file, FALSE if it's not.
+   * @return The media type (e.g. MEDIA_IMAGE or MEDIA_VIDEO), FALSE if it doesn't look like media.
    */
   function is_media($blob) {
     // Check for a JPG header.
     if ($blob[0] == chr(0xFF) && $blob[1] == chr(0xD8)) {
-      return TRUE;
+      return self::MEDIA_IMAGE;
     }
 
     // Check for a MP4 header.
     if ($blob[0] == chr(0x00) && $blob[1] == chr(0x00)) {
-      return TRUE;
+      return self::MEDIA_VIDEO;
     }
 
     return FALSE;
