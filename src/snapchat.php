@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Extends the SnapchatAPI class to provide the API functions you'd expect.
+ * Provides an implementation of the undocumented Snapchat API.
  */
 class Snapchat {
 
