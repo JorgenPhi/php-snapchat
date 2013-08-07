@@ -26,11 +26,11 @@ class Snapchat {
   /**
    * Sets up some initial variables.
    */
-  public function __construct($username, $password) {
+  public function __construct($username = NULL, $password = NULL) {
     $this->auth_token = FALSE;
     $this->username = FALSE;
-    
-    $this->login($username, $password);
+
+    if (!empty($username)) $this->login($username, $password);
   }
 
 
