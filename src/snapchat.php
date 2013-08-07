@@ -198,7 +198,7 @@ class Snapchat {
     $result = self::post(
       '/login',
       array(
-         'username' => $username,
+        'username' => $username,
         'password' => $password,
         'timestamp' => $timestamp,
       ),
