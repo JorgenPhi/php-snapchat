@@ -31,6 +31,9 @@ file_put_contents('/home/dan/snap.jpg', $data);
 // Mark the snap as viewed:
 $snapchat->markSnapViewed('122FAST2FURIOUS334r');
 
+// Screenshot!
+$snapchat->markSnapShot('122FAST2FURIOUS334r');
+
 // Upload a snap and send it to me for 8 seconds:
 $id = $snapchat->upload(
 	Snapchat::MEDIA_IMAGE,
