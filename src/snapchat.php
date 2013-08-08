@@ -351,7 +351,7 @@ class Snapchat {
   public function getSnaps($since = 0) {
     $updates = $this->getUpdates($since);
 
-    if (!$updates) {
+    if (empty($updates)) {
       return FALSE;
     }
 
@@ -384,7 +384,7 @@ class Snapchat {
   public function getFriends($since = 0) {
     $updates = $this->getUpdates($since);
 
-    if (!$updates) {
+    if (empty($updates)) {
       return FALSE;
     }
 
@@ -401,7 +401,7 @@ class Snapchat {
   public function getAddedFriends($since = 0) {
     $updates = $this->getUpdates($since);
 
-    if (!$updates) {
+    if (empty($updates)) {
       return FALSE;
     }
 
