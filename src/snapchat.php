@@ -218,7 +218,7 @@ class Snapchat {
       $this->username = $result->username;
     }
 
-     return $result;
+    return $result;
   }
 
 
@@ -246,7 +246,64 @@ class Snapchat {
       )
     );
 
-      return is_null($result);
+    return is_null($result);
+  }
+
+
+  /**
+   * Creates a user account.
+   * 
+   * @param $username The desired username.
+   * @param $password The password to associate with the account.
+   * @param $email The email address to associate with the account.
+   * @param $birthday The user's birthday (yyyy-mm-dd).
+   * @return The data returned by the service. Generally, returns the same result as calling self::getUpdates().
+   */
+  public function register($username, $password, $email, $birthday) {
+    $timestamp = self::timestamp();
+    $result = self::post(
+      '/register',
+      array(
+        'birthday' => $birthday,
+        'password' => $password,
+        'email' => $email,
+        'timestamp' => $timestamp,
+      ),
+      array(
+        self::STATIC_TOKEN,
+        $timestamp,
+      )
+    );
+
+    if (!isset($result->token)) {
+      return FALSE;
+    }
+
+    $timestamp = self::timestamp();
+    $result = self::post(
+      '/registeru',
+      array(
+        'email' => $email,
+        'username' => $username,
+        'timestamp' => $timestamp,
+      ),
+      array(
+        self::STATIC_TOKEN,
+        $timestamp,
+      )
+    );
+
+    // If the server sends back an auth token, remember it.
+    if (!empty($result->auth_token)) {
+      $this->auth_token = $result->auth_token;
+    }
+
+    // Store the logged in user.
+    if (!empty($result->username)) {
+      $this->username = $result->username;
+    }
+
+    return $result;
   }
 
 
@@ -662,7 +719,7 @@ class Snapchat {
    * @param $data The file data to upload.
    * @return The media ID or FALSE on failure.
    */
-  function upload($type, $data) {
+  public function upload($type, $data) {
     // Make sure we're logged in and have a valid access token.
     if (!$this->auth_token || !$this->username) {
       return FALSE;
@@ -704,7 +761,7 @@ class Snapchat {
    * @param $time (optional) The time in seconds the snap should be available (1-10). Defaults to 3.
    * @return TRUE on success or FALSE on failure.
    */
-  function send($media_id, $recipients, $time = 3) {
+  public function send($media_id, $recipients, $time = 3) {
     // Make sure we're logged in and have a valid access token.
     if (!$this->auth_token || !$this->username) {
       return FALSE;
@@ -736,7 +793,7 @@ class Snapchat {
    * @param $friends An array of usernames of the friends for which to retrieve best friend information.
    * @return An associative array keyed by username or FALSE on failure.
    */
-  function getBests($friends) {
+  public function getBests($friends) {
     // Make sure we're logged in and have a valid access token.
     if (!$this->auth_token || !$this->username) {
       return FALSE;
@@ -774,7 +831,7 @@ class Snapchat {
    *
    * @return TRUE on success or FALSE on failure.
    */
-  function clearFeed() {
+  public function clearFeed() {
     // Make sure we're logged in and have a valid access token.
     if (!$this->auth_token || !$this->username) {
       return FALSE;
@@ -803,7 +860,7 @@ class Snapchat {
    * @param $setting The privacy setting, i.e. PRIVACY_EVERYONE or PRIVACY_FRIENDS.
    * @return TRUE on success or FALSE on failure.
    */
-  function updatePrivacy($setting) {
+  public function updatePrivacy($setting) {
     // Make sure we're logged in and have a valid access token.
     if (!$this->auth_token || !$this->username) {
       return FALSE;
@@ -834,7 +891,7 @@ class Snapchat {
    * @param $email The new email address.
    * @return TRUE on success or FALSE on failure.
    */
-  function updateEmail($email) {
+  public function updateEmail($email) {
     // Make sure we're logged in and have a valid access token.
     if (!$this->auth_token || !$this->username) {
       return FALSE;
