@@ -229,8 +229,8 @@ class Snapchat {
    */
   public function logout() {
     // Make sure we're logged in and have a valid access token.
-     if (!$this->auth_token || !$this->username) {
-       return FALSE;
+    if (!$this->auth_token || !$this->username) {
+      return FALSE;
     }
 
     $timestamp = self::timestamp();
@@ -258,8 +258,8 @@ class Snapchat {
    */
   public function getUpdates($since = 0) {
     // Make sure we're logged in and have a valid access token.
-     if (!$this->auth_token || !$this->username) {
-       return FALSE;
+    if (!$this->auth_token || !$this->username) {
+      return FALSE;
     }
 
     $timestamp = self::timestamp();
@@ -360,8 +360,8 @@ class Snapchat {
    */
   public function addFriends($usernames) {
     // Make sure we're logged in and have a valid access token.
-     if (!$this->auth_token || !$this->username) {
-       return FALSE;
+    if (!$this->auth_token || !$this->username) {
+      return FALSE;
     }
 
     $friends = array();
@@ -403,8 +403,8 @@ class Snapchat {
    */
   public function deleteFriends($usernames) {
     // Make sure we're logged in and have a valid access token.
-     if (!$this->auth_token || !$this->username) {
-       return FALSE;
+    if (!$this->auth_token || !$this->username) {
+      return FALSE;
     }
 
     $friends = array();
@@ -447,8 +447,8 @@ class Snapchat {
    */
   public function setDisplayName($username, $display) {
     // Make sure we're logged in and have a valid access token.
-     if (!$this->auth_token || !$this->username) {
-       return FALSE;
+    if (!$this->auth_token || !$this->username) {
+      return FALSE;
     }
 
     $timestamp = self::timestamp();
@@ -479,8 +479,8 @@ class Snapchat {
    */
   public function block($username) {
     // Make sure we're logged in and have a valid access token.
-     if (!$this->auth_token || !$this->username) {
-       return FALSE;
+    if (!$this->auth_token || !$this->username) {
+      return FALSE;
     }
 
     $timestamp = self::timestamp();
@@ -510,8 +510,8 @@ class Snapchat {
    */
   public function unblock($username) {
     // Make sure we're logged in and have a valid access token.
-     if (!$this->auth_token || !$this->username) {
-       return FALSE;
+    if (!$this->auth_token || !$this->username) {
+      return FALSE;
     }
 
     $timestamp = self::timestamp();
@@ -541,8 +541,8 @@ class Snapchat {
    */
   public function getMedia($id) {
     // Make sure we're logged in and have a valid access token.
-     if (!$this->auth_token || !$this->username) {
-       return FALSE;
+    if (!$this->auth_token || !$this->username) {
+      return FALSE;
     }
 
     $timestamp = self::timestamp();
@@ -583,8 +583,8 @@ class Snapchat {
    */
   public function sendEvents($events, $snap_info = array()) {
     // Make sure we're logged in and have a valid access token.
-     if (!$this->auth_token || !$this->username) {
-       return FALSE;
+    if (!$this->auth_token || !$this->username) {
+      return FALSE;
     }
 
     $timestamp = self::timestamp();
@@ -664,8 +664,8 @@ class Snapchat {
    */
   function upload($type, $data) {
     // Make sure we're logged in and have a valid access token.
-     if (!$this->auth_token || !$this->username) {
-       return FALSE;
+    if (!$this->auth_token || !$this->username) {
+      return FALSE;
     }
 
     // To make cURL happy, we write the data to a file first.
@@ -706,8 +706,8 @@ class Snapchat {
    */
   function send($media_id, $recipients, $time = 3) {
     // Make sure we're logged in and have a valid access token.
-     if (!$this->auth_token || !$this->username) {
-       return FALSE;
+    if (!$this->auth_token || !$this->username) {
+      return FALSE;
     }
 
     $timestamp = self::timestamp();
@@ -738,8 +738,8 @@ class Snapchat {
    */
   function getBests($friends) {
     // Make sure we're logged in and have a valid access token.
-     if (!$this->auth_token || !$this->username) {
-       return FALSE;
+    if (!$this->auth_token || !$this->username) {
+      return FALSE;
     }
 
     $timestamp = self::timestamp();
@@ -776,8 +776,8 @@ class Snapchat {
    */
   function clearFeed() {
     // Make sure we're logged in and have a valid access token.
-     if (!$this->auth_token || !$this->username) {
-       return FALSE;
+    if (!$this->auth_token || !$this->username) {
+      return FALSE;
     }
 
     $timestamp = self::timestamp();
@@ -805,8 +805,8 @@ class Snapchat {
    */
   function updatePrivacy($setting) {
     // Make sure we're logged in and have a valid access token.
-     if (!$this->auth_token || !$this->username) {
-       return FALSE;
+    if (!$this->auth_token || !$this->username) {
+      return FALSE;
     }
 
     $timestamp = self::timestamp();
@@ -836,8 +836,8 @@ class Snapchat {
    */
   function updateEmail($email) {
     // Make sure we're logged in and have a valid access token.
-     if (!$this->auth_token || !$this->username) {
-       return FALSE;
+    if (!$this->auth_token || !$this->username) {
+      return FALSE;
     }
 
     $timestamp = self::timestamp();
