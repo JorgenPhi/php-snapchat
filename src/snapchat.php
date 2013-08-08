@@ -713,6 +713,38 @@ class Snapchat {
 
 
   /**
+   * Sends a screenshot event.
+   *
+   * @param $id The snap to mark as shot.
+   * @param $time The amount of time (in seconds) the snap was viewed. Defaults to 1.
+   * @return TRUE on success, FALSE on failure.
+   */
+  public function markSnapShot($id, $time = 1) {
+    $snap_info = array(
+      $id => array(
+        // We use the same time values as in markSnapViewed, but add in the
+        // screenshot status.
+        't' => microtime(TRUE),
+        'sv' => $time + (mt_rand() / mt_getrandmax() / 10),
+        'c' => self::STATUS_SCREENSHOT,
+      ),
+    );
+
+    $events = array(
+      array(
+        'eventName' => 'SNAP_SCREENSHOT',
+        'params' => array(
+          'id' => $id,
+        ),
+        'ts' => time() - $time,
+      ),
+    );
+
+    return $this->sendEvents($events, $snap_info);
+  }
+
+
+  /**
    * Uploads a file.
    *
    * @param $type The media type, i.e. MEDIA_IMAGE or MEDIA_VIDEO.
