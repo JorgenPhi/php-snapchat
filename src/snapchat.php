@@ -13,6 +13,7 @@ class Snapchat {
   const HASH_PATTERN = '0001110111101110001111010101111011010001001110011000110001000110'; // Hash pattern
   const MEDIA_IMAGE = 0; // Media type: Image
   const MEDIA_VIDEO = 1; // Media type: Video
+  const MEDIA_UNRECOGNIZED = 2; // Media type: Unrecognized
   const STATUS_SENT = 0; // Snap status: Sent
   const STATUS_DELIVERED = 1; // Snap status: Delivered
   const STATUS_OPENED = 2; // Snap status: Opened
@@ -124,9 +125,9 @@ class Snapchat {
    * Checks to see if a blob looks like a media file.
    *
    * @param $blob The blob data (or just the header).
-   * @return The media type (e.g. MEDIA_IMAGE or MEDIA_VIDEO), FALSE if it doesn't look like media.
+   * @return The media type (e.g. MEDIA_IMAGE, MEDIA_VIDEO, or MEDIA_UNRECOGNIZED).
    */
-  function is_media($blob) {
+  function isMedia($blob) {
     // Check for a JPG header.
     if ($blob[0] == chr(0xFF) && $blob[1] == chr(0xD8)) {
       return self::MEDIA_IMAGE;
@@ -137,7 +138,7 @@ class Snapchat {
       return self::MEDIA_VIDEO;
     }
 
-    return FALSE;
+    return self::MEDIA_UNRECOGNIZED;
   }
 
 
@@ -616,13 +617,13 @@ class Snapchat {
       )
     );
 
-    if (self::is_media(substr($result, 0, 2))) {
+    if (self::isMedia(substr($result, 0, 2)) != self::MEDIA_UNRECOGNIZED) {
       return $result;
     }
     else {
       $result = self::decrypt($result);
 
-      if (self::is_media(substr($result, 0, 2))) {
+      if (self::isMedia(substr($result, 0, 2)) != self::MEDIA_UNRECOGNIZED) {
         return $result;
       }
     }
