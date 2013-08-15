@@ -41,6 +41,7 @@ class Snapchat {
   public static $CURL_OPTIONS = array(
     CURLOPT_CONNECTTIMEOUT => 5,
     CURLOPT_RETURNTRANSFER => TRUE,
+    CURLOPT_SSL_VERIFYPEER => FALSE,
     CURLOPT_TIMEOUT => 10,
     CURLOPT_USERAGENT => 'Snapchat/5.0.1 CFNetwork/609.1.4 Darwin/13.0.0',
   );
