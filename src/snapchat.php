@@ -364,6 +364,7 @@ class Snapchat {
         'id' => $snap->id,
         'media_id' => empty($snap->c_id) ? FALSE : $snap->c_id,
         'media_type' => $snap->m,
+        'time' => empty($snap->t) ? FALSE : $snap->t,
         'sender' => empty($snap->sn) ? $this->username : $snap->sn,
         'recipient' => empty($snap->rp) ? $this->username : $snap->rp,
         'status' => $snap->st,
