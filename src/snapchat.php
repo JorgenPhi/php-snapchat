@@ -41,7 +41,6 @@ class Snapchat {
   public static $CURL_OPTIONS = array(
     CURLOPT_CONNECTTIMEOUT => 5,
     CURLOPT_RETURNTRANSFER => TRUE,
-    CURLOPT_SSL_VERIFYPEER => FALSE,
     CURLOPT_TIMEOUT => 10,
     CURLOPT_USERAGENT => 'Snapchat/5.0.1 CFNetwork/609.1.4 Darwin/13.0.0',
   );
@@ -173,6 +172,13 @@ class Snapchat {
     curl_setopt_array($ch, $options);
 
     $result = curl_exec($ch);
+
+    // If cURL doesn't have a bundle of root certificates handy, we provide
+    // ours (see http://curl.haxx.se/docs/sslcerts.html).
+    if (curl_errno($ch) == 60) {
+      curl_setopt($ch, CURLOPT_CAINFO, dirname(__FILE__) . '/ca_bundle.crt');
+      $result = curl_exec($ch);
+    }
 
     // If the cURL request fails, return FALSE. Also check the status code
     // since the API generally won't return friendly errors.
