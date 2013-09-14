@@ -52,7 +52,7 @@ class Snapchat {
    * @return The current timestamp, expressed in milliseconds since epoch.
    */
   public function timestamp() {
-    return round(microtime(TRUE) * 1000);
+    return floor(microtime(TRUE) * 1000);
   }
 
 
