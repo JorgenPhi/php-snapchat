@@ -13,13 +13,19 @@ class Snapchat {
   const HASH_PATTERN = '0001110111101110001111010101111011010001001110011000110001000110'; // Hash pattern
   const MEDIA_IMAGE = 0; // Media type: Image
   const MEDIA_VIDEO = 1; // Media type: Video
-  const MEDIA_UNRECOGNIZED = 2; // Media type: Unrecognized
+  const MEDIA_VIDEO_NOAUDIO = 2; // Media type: Video without audio
+  const MEDIA_FRIEND_REQUEST = 3; // Media type: Friend request
+  const MEDIA_FRIEND_REQUEST_IMAGE = 4; // Media type: Image from unconfirmed friend
+  const MEDIA_FRIEND_REQUEST_VIDEO = 5; // Media type: Video from unconfirmed friend
+  const MEDIA_FRIEND_REQUEST_VIDEO_NOAUDIO = 6; // Media type: Video without audio from unconfirmed friend
+  const STATUS_NONE = -1; // Snap status: None
   const STATUS_SENT = 0; // Snap status: Sent
   const STATUS_DELIVERED = 1; // Snap status: Delivered
   const STATUS_OPENED = 2; // Snap status: Opened
   const STATUS_SCREENSHOT = 3; // Snap status: Screenshot
   const FRIEND_CONFIRMED = 0; // Friend status: Confirmed
   const FRIEND_UNCONFIRMED = 1; // Friend status: Unconfirmed
+  const FRIEND_BLOCKED = 2; // Friend status: Blocked
   const PRIVACY_EVERYONE = 0; // Privacy setting: Accept snaps from everyone
   const PRIVACY_FRIENDS = 1; // Privacy setting: Accept snaps only from friends
 
@@ -125,20 +131,20 @@ class Snapchat {
    * Checks to see if a blob looks like a media file.
    *
    * @param $blob The blob data (or just the header).
-   * @return The media type (e.g. MEDIA_IMAGE, MEDIA_VIDEO, or MEDIA_UNRECOGNIZED).
+   * @return TRUE if the blob looks like a media file, FALSE otherwise.
    */
   function isMedia($blob) {
     // Check for a JPG header.
     if ($blob[0] == chr(0xFF) && $blob[1] == chr(0xD8)) {
-      return self::MEDIA_IMAGE;
+      return TRUE;
     }
 
     // Check for a MP4 header.
     if ($blob[0] == chr(0x00) && $blob[1] == chr(0x00)) {
-      return self::MEDIA_VIDEO;
+      return TRUE;
     }
 
-    return self::MEDIA_UNRECOGNIZED;
+    return FALSE;
   }
 
 
@@ -625,13 +631,13 @@ class Snapchat {
       )
     );
 
-    if (self::isMedia(substr($result, 0, 2)) != self::MEDIA_UNRECOGNIZED) {
+    if (self::isMedia(substr($result, 0, 2))) {
       return $result;
     }
     else {
       $result = self::decrypt($result);
 
-      if (self::isMedia(substr($result, 0, 2)) != self::MEDIA_UNRECOGNIZED) {
+      if (self::isMedia(substr($result, 0, 2))) {
         return $result;
       }
     }
