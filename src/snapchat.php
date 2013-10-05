@@ -393,6 +393,44 @@ class Snapchat {
 
 
   /**
+   * Queries the friend-finding service.
+   *
+   * @param $numbers An array of phone numbers.
+   * @param $country The country code. Defaults to US.
+   * @return An array of user objects.
+   */
+  public function findFriends($numbers, $country = 'US') {
+    $numbers = array_flip($numbers);
+
+    // Make sure we're logged in and have a valid access token.
+    if (!$this->auth_token || !$this->username) {
+      return FALSE;
+    }
+
+    $timestamp = self::timestamp();
+    $result = self::post(
+      '/find_friends',
+      array(
+        'countryCode' => $country,
+        'numbers' => json_encode($numbers),
+        'timestamp' => $timestamp,
+        'username' => $this->username,
+      ),
+      array(
+        $this->auth_token,
+        $timestamp,
+      )
+    );
+
+    if (isset($result->results)) {
+      return $result->results;
+    }
+
+    return $result;
+  }
+
+
+  /**
    * Gets the user's friends.
    *
    * @return An array of friends or FALSE on failure.
