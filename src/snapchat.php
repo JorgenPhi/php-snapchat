@@ -5,7 +5,7 @@
  */
 class Snapchat {
 
-  const VERSION = '5.0.1'; // App version
+  const VERSION = '6.0.0'; // App version
   const URL = 'https://feelinsonice-hrd.appspot.com/bq'; // API URL
   const SECRET = 'iEk21fuwZApXlz93750dmW22pw389dPwOk'; // API secret
   const STATIC_TOKEN = 'm198sOkJEn37DjqZ32lpRu76xmw288xSQ9'; // API static token
@@ -48,7 +48,7 @@ class Snapchat {
     CURLOPT_CONNECTTIMEOUT => 5,
     CURLOPT_RETURNTRANSFER => TRUE,
     CURLOPT_TIMEOUT => 10,
-    CURLOPT_USERAGENT => 'Snapchat/5.0.1 CFNetwork/609.1.4 Darwin/13.0.0',
+    CURLOPT_USERAGENT => 'Snapchat/6.0.0 (iPhone; iOS 7.0.2; gzip)',
   );
 
 
@@ -324,10 +324,9 @@ class Snapchat {
   /**
    * Retrieves general user, friend, and snap updates.
    *
-   * @param $since (optional) The maximum age of the updates to be fetched in seconds since epoch. Defaults to 0 because we generally want them all.
    * @return The data returned by the service or FALSE on failure.
    */
-  public function getUpdates($since = 0) {
+  public function getUpdates() {
     // Make sure we're logged in and have a valid access token.
     if (!$this->auth_token || !$this->username) {
       return FALSE;
@@ -335,11 +334,10 @@ class Snapchat {
 
     $timestamp = self::timestamp();
     $result = self::post(
-      '/updates',
+      '/all_updates',
       array(
         'timestamp' => $timestamp,
         'username' => $this->username,
-        'update_timestamp' => $since,
       ),
       array(
         $this->auth_token,
@@ -347,9 +345,9 @@ class Snapchat {
       )
     );
 
-    // If the server sends back an auth token, remember it.
-     if (!empty($result->auth_token)) {
-      $this->auth_token = $result->auth_token;
+    if (!empty($result->updates_response)) {
+      $this->auth_token = $result->updates_response->auth_token;
+      return $result->updates_response;
     }
 
      return $result;
@@ -383,6 +381,11 @@ class Snapchat {
         'screenshot_count' => empty($snap->c) ? 0 : $snap->c,
         'sent' => $snap->sts,
         'opened' => $snap->ts,
+        'broadcast' => empty($snap->broadcast) ? FALSE : (object) array(
+          'url' => $snap->broadcast_url,
+          'action_text' => $snap->broadcast_action_text,
+          'hide_timer' => $snap->broadcast_hide_timer,
+        ),
       );
     }
 
@@ -776,9 +779,8 @@ class Snapchat {
     $temp = tempnam(sys_get_temp_dir(), 'Snap');
     file_put_contents($temp, self::encrypt($data));
 
-    // For the adventurous: What happens when you upload more than one snap
-    // per second?
-    $media_id = strtoupper($this->username) . time();
+    // TODO: Media IDs are GUIDs now.
+    $media_id = strtoupper($this->username) . '~' . time();
     $timestamp = self::timestamp();
     $result = self::post(
       '/upload',
