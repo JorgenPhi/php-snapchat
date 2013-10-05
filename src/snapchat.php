@@ -357,11 +357,10 @@ class Snapchat {
   /**
    * Gets the user's snaps.
    *
-   * @param $since (optional) The maximum age of the snaps to be fetched in seconds since epoch.
    * @return An array of snaps or FALSE on failure.
    */
-  public function getSnaps($since = 0) {
-    $updates = $this->getUpdates($since);
+  public function getSnaps() {
+    $updates = $this->getUpdates();
 
     if (empty($updates)) {
       return FALSE;
@@ -396,11 +395,10 @@ class Snapchat {
   /**
    * Gets the user's friends.
    *
-   * @param $since (optional) When specified, only friends added after this timestamp will be returned.
    * @return An array of friends or FALSE on failure.
    */
-  public function getFriends($since = 0) {
-    $updates = $this->getUpdates($since);
+  public function getFriends() {
+    $updates = $this->getUpdates();
 
     if (empty($updates)) {
       return FALSE;
@@ -413,11 +411,10 @@ class Snapchat {
   /**
    * Gets the user's added friends.
    *
-   * @param $since (optional) When specified, only friends who sent a request or were requested after this timestamp will be returned.
    * @return An array of friends or FALSE on failure.
    */
-  public function getAddedFriends($since = 0) {
-    $updates = $this->getUpdates($since);
+  public function getAddedFriends() {
+    $updates = $this->getUpdates();
 
     if (empty($updates)) {
       return FALSE;
