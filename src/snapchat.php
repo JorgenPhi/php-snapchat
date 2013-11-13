@@ -26,6 +26,7 @@ class Snapchat {
   const FRIEND_CONFIRMED = 0; // Friend status: Confirmed
   const FRIEND_UNCONFIRMED = 1; // Friend status: Unconfirmed
   const FRIEND_BLOCKED = 2; // Friend status: Blocked
+  const FRIEND_DELETED = 3; // Friend status: Deleted
   const PRIVACY_EVERYONE = 0; // Privacy setting: Accept snaps from everyone
   const PRIVACY_FRIENDS = 1; // Privacy setting: Accept snaps only from friends
 
@@ -463,7 +464,38 @@ class Snapchat {
 
 
   /**
-   * Adds friends.
+   * Adds a friend.
+   *
+   * @param $username The username of the friend to add.
+   * @return TRUE if successful, FALSE otherwise.
+   */
+  public function addFriend($username) {
+    // Make sure we're logged in and have a valid access token.
+    if (!$this->auth_token || !$this->username) {
+      return FALSE;
+    }
+
+    $timestamp = self::timestamp();
+    $result = self::post(
+      '/friend',
+      array(
+        'action' => 'add',
+        'friend' => $username,
+        'timestamp' => $timestamp,
+        'username' => $this->username,
+      ),
+      array(
+        $this->auth_token,
+        $timestamp,
+      )
+    );
+
+    return !empty($result->message);
+  }
+
+
+  /**
+   * Adds multiple friends.
    *
    * @param $usernames An array of usernames to add as friends.
    * @return TRUE if successful, FALSE otherwise.
@@ -506,35 +538,23 @@ class Snapchat {
 
 
   /**
-   * Deletes friends.
+   * Deletes a friend.
    *
-   * @param $usernames An array of usernames of friends to delete.
+   * @param $username The username of the friend to delete.
    * @return TRUE if successful, FALSE otherwise.
    */
-  public function deleteFriends($usernames) {
+  public function deleteFriend($username) {
     // Make sure we're logged in and have a valid access token.
     if (!$this->auth_token || !$this->username) {
       return FALSE;
-    }
-
-    $friends = array();
-    foreach ($usernames as $username) {
-      $friends[] = (object) array(
-        'display' => '',
-        'name' => $username,
-        'type' => self::FRIEND_CONFIRMED,
-      );
     }
 
     $timestamp = self::timestamp();
     $result = self::post(
       '/friend',
       array(
-        'action' => 'multiadddelete',
-        'friend' => json_encode(array(
-          'friendsToAdd' => array(),
-          'friendsToDelete' => $friends,
-        )),
+        'action' => 'delete',
+        'friend' => $username,
         'timestamp' => $timestamp,
         'username' => $this->username,
       ),

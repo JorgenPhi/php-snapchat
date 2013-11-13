@@ -44,11 +44,17 @@ $snapchat->send($id, array('stelljes'), 8);
 // Destroy the evidence:
 $snapchat->clearFeed();
 
+// Find friends by phone number:
+$friends = $snapchat->findFriends(array('18006492568', '7183876962'));
+
 // Get a list of your friends:
 $friends = $snapchat->getFriends();
 
 // Add some people as friends:
-$snapchat->addFriends(array('bill', 'bob', 'bart'));
+$snapchat->addFriends(array('bill', 'bob'));
+
+// Add someone you forgot:
+$snapchat->addFriend('bart');
 
 // Get a list of the people you've added:
 $added = $snapchat->getAddedFriends();
@@ -66,7 +72,7 @@ $snapchat->block('bart');
 $snapchat->unblock('bart');
 
 // Delete Bart entirely:
-$snapchat->deleteFriends(array('bart'));
+$snapchat->deleteFriend('bart');
 
 // You only want your friends to be able to snap you:
 $snapchat->updatePrivacy(Snapchat::PRIVACY_FRIENDS);
