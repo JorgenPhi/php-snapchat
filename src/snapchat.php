@@ -266,7 +266,7 @@ class Snapchat {
 
   /**
    * Creates a user account.
-   * 
+   *
    * @param $username The desired username.
    * @param $password The password to associate with the account.
    * @param $email The email address to associate with the account.
@@ -814,6 +814,9 @@ class Snapchat {
     $temp = tempnam(sys_get_temp_dir(), 'Snap');
     file_put_contents($temp, self::encrypt($data));
 
+    if (version_compare(PHP_VERSION, '5.5.0', '>='))
+      $cfile = curl_file_create($temp,($type == Snapchat::MEDIA_IMAGE ? 'image/jpeg' : 'video/quicktime') ,'test_name');
+
     // TODO: Media IDs are GUIDs now.
     $media_id = strtoupper($this->username) . '~' . time();
     $timestamp = self::timestamp();
@@ -822,7 +825,7 @@ class Snapchat {
       array(
         'media_id' => $media_id,
         'type' => $type,
-        'data' => '@' . $temp . ';filename=data',
+        'data' => (version_compare(PHP_VERSION, '5.5.0', '>=') ?  $cfile : '@' . $temp . ';filename=data'),
         'timestamp' => $timestamp,
         'username' => $this->username,
       ),
