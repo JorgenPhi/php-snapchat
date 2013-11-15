@@ -12,7 +12,7 @@
          bootstrap="./vendor/autoload.php">
 
     <testsuites>
-        <testsuite name="PHP-Snapchat Test Suite">
+        <testsuite name="php-snapchat Test Suite">
             <directory>./tests/</directory>
         </testsuite>
     </testsuites>

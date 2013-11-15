@@ -834,8 +834,9 @@ class Snapchat {
     $temp = tempnam(sys_get_temp_dir(), 'Snap');
     file_put_contents($temp, self::encrypt($data));
 
-    if (version_compare(PHP_VERSION, '5.5.0', '>='))
-      $cfile = curl_file_create($temp,($type == Snapchat::MEDIA_IMAGE ? 'image/jpeg' : 'video/quicktime') ,'test_name');
+    if (version_compare(PHP_VERSION, '5.5.0', '>=')) {
+      $cfile = curl_file_create($temp, ($type == Snapchat::MEDIA_IMAGE ? 'image/jpeg' : 'video/quicktime') ,'test_name');
+    }
 
     // TODO: Media IDs are GUIDs now.
     $media_id = strtoupper($this->username) . '~' . time();
@@ -845,7 +846,7 @@ class Snapchat {
       array(
         'media_id' => $media_id,
         'type' => $type,
-        'data' => (version_compare(PHP_VERSION, '5.5.0', '>=') ?  $cfile : '@' . $temp . ';filename=data'),
+        'data' => (version_compare(PHP_VERSION, '5.5.0', '>=') ? $cfile : '@' . $temp . ';filename=data'),
         'timestamp' => $timestamp,
         'username' => $this->username,
       ),
