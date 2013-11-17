@@ -1020,7 +1020,7 @@ class Snapchat {
       )
     );
 
-    return $result->param == $setting;
+    return (isset($result->param) && $result->param == $email ? TRUE : FALSE);
   }
 
 }
