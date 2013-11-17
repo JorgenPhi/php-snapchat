@@ -127,7 +127,7 @@ class PHPSnapchatTest extends PHPUnit_Framework_TestCase {
     $friends = $snapchat->getAddedFriends();
     $this->assertEquals(count($friends)>0,TRUE);
     $bestFriends = $snapchat->getBests(array($this->users[2]['name']));
-    $this->assertEquals(is_int($bestFriends['u2php55']['score']),TRUE);
+    $this->assertEquals(is_int($bestFriends[$this->users[2]['name']]['score']),TRUE);
   }
 
   public function testManageUserSettings() {
