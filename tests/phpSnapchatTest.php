@@ -2,6 +2,8 @@
 
 class PHPSnapchatTest extends PHPUnit_Framework_TestCase {
 
+  const STRANGE_USERNAME = 'superstrangename1234!!ö';
+
   private $users = array();
 
   /**
@@ -15,6 +17,18 @@ class PHPSnapchatTest extends PHPUnit_Framework_TestCase {
       ),
       2 => array(
         'name'=> 'u2php5' . PHP_MINOR_VERSION,
+        'pass' => '123456789',
+      ),
+      3 => array(
+        'name'=> 'u3php5' . PHP_MINOR_VERSION,
+        'pass' => '123456789',
+      ),
+      4 => array(
+        'name'=> 'u4php5' . PHP_MINOR_VERSION,
+        'pass' => '123456789',
+      ),
+      5 => array(
+        'name'=> 'u5php5' . PHP_MINOR_VERSION,
         'pass' => '123456789',
       ),
     );
@@ -77,13 +91,58 @@ class PHPSnapchatTest extends PHPUnit_Framework_TestCase {
     foreach($snaps as $snap) {
       if ($snap->status == Snapchat::STATUS_DELIVERED && strcmp($snap->recipient, $snapchat->username) == 0) {
         $data = $snapchat->getMedia($snap->id);
-        //$this->assertEquals(is_string($data),TRUE);
-        //file_put_contents(substr($file,0,-5)."2".substr($file,-4), $data);
         $this->assertEquals($snapchat->markSnapViewed($snap->id), TRUE, 'User 2 marked snap viewed.');
+        $this->assertEquals($snapchat->markSnapShot($snap->id),TRUE, 'User 2 mark screenshot.');
+        $this->assertEquals(is_string($data),TRUE);
       }
     }
 
     $this->assertEquals($snapchat->clearFeed(), TRUE, 'Failed to clear the feed of test user 2.');
     $this->assertEquals($snapchat->logout(), TRUE, 'Logout failed for test user 2.');
+  }
+
+  public function testWrongMedia() {
+    $snapchat = new Snapchat($this->users[1]['name'], $this->users[1]['pass']);
+    $this->assertNotEquals($snapchat->auth_token, FALSE, 'Login failed for test user 1.');
+    $data = $snapchat->getMedia('12345');
+    $this->assertEquals($data,FALSE);
+  }
+
+  public function testManageFriends() {
+    $snapchat = new Snapchat($this->users[1]['name'], $this->users[1]['pass']);
+    $this->assertNotEquals($snapchat->auth_token, FALSE, 'Login failed for test user 1.');
+
+    $this->assertEquals($snapchat->addFriend(PHPSnapchatTest::STRANGE_USERNAME),FALSE,'User 1 add a strange username.');
+    $this->assertEquals($snapchat->deleteFriend($this->users[3]['name']),TRUE,'Delete an unkown friend.');
+
+    $this->assertEquals($snapchat->addFriend($this->users[3]['name']),TRUE,'User 1 add user 3 as friend.');
+    $this->assertEquals($snapchat->deleteFriend($this->users[3]['name']),TRUE,'User 1 remove user 3 from friendslist.');
+    $this->assertEquals($snapchat->addFriends(array($this->users[4]['name'],$this->users[5]['name'])),TRUE,'User1 adding multiple friends.');
+
+    $this->assertEquals($snapchat->deleteFriend($this->users[4]['name']),TRUE,'User 1 remove user 4 from friendlist.');
+    $this->assertEquals($snapchat->deleteFriend($this->users[5]['name']),TRUE,'User 1 remove user 5 from friendlist.');
+
+    $friends = $snapchat->getFriends();
+    $this->assertEquals($friends[0]->name,'teamsnapchat');
+    $friends = $snapchat->getAddedFriends();
+    $this->assertEquals($friends[0]->name,$this->users[2]['name']);
+    $bestFriends = $snapchat->getBests(array($this->users[2]['name']));
+    $this->assertEquals(is_int($bestFriends['u2php55']['score']),TRUE);
+  }
+
+  public function testManageUserSettings() {
+    $snapchat = new Snapchat($this->users[1]['name'], $this->users[1]['pass']);
+    $this->assertNotEquals($snapchat->auth_token, FALSE, 'Login failed for test user 1.');
+
+    $this->assertEquals($snapchat->block($this->users[5]['name']),TRUE,'User 1 block user 5.');
+    $this->assertEquals($snapchat->unblock($this->users[5]['name']),TRUE,'User 1 unblock user 5.');
+
+    $this->assertEquals($snapchat->updatePrivacy(Snapchat::PRIVACY_EVERYONE),TRUE,'User 1 accept snaps from everyone.');
+    $this->assertEquals($snapchat->updatePrivacy(Snapchat::PRIVACY_FRIENDS),TRUE,'User 1 accept snaps only from friends.');
+
+    $this->assertEquals($snapchat->updateEmail($this->users[1]['name'].'@php-snapchat.tld'),FALSE,'User 1 changes his email to an invalid address.');
+    $this->assertEquals($snapchat->updateEmail($this->users[1]['name'].'@php-snapchat.org'),TRUE,'User 1 changes his email.');
+
+    $this->assertEquals($snapchat->setDisplayName($this->users[2]['name'],$this->users[2]['name']),TRUE,'User 1 set user 2 displayname.');
   }
 }
