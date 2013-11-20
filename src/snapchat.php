@@ -5,7 +5,7 @@
  */
 class Snapchat {
 
-  const VERSION = '6.0.0'; // App version
+  const VERSION = '6.0.2'; // App version
   const URL = 'https://feelinsonice-hrd.appspot.com/bq'; // API URL
   const SECRET = 'iEk21fuwZApXlz93750dmW22pw389dPwOk'; // API secret
   const STATIC_TOKEN = 'm198sOkJEn37DjqZ32lpRu76xmw288xSQ9'; // API static token
@@ -49,7 +49,7 @@ class Snapchat {
     CURLOPT_CONNECTTIMEOUT => 5,
     CURLOPT_RETURNTRANSFER => TRUE,
     CURLOPT_TIMEOUT => 10,
-    CURLOPT_USERAGENT => 'Snapchat/6.0.0 (iPhone; iOS 7.0.2; gzip)',
+    CURLOPT_USERAGENT => 'Snapchat/6.0.2 (iPhone; iOS 7.0.4; gzip)',
   );
 
 
