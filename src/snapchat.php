@@ -196,8 +196,16 @@ class Snapchat {
 
     curl_close($ch);
 
+    // TODO: replace with a check for application/octet-stream
+    if ($endpoint == '/blob') {
+      return $result;
+    }
+
+    // Add support for foreign characters in the JSON response.
+    $result = iconv('UTF-8', 'UTF-8//IGNORE', utf8_encode($result));
+
     $data = json_decode($result);
-    return json_last_error() == JSON_ERROR_NONE ? $data : $result;
+    return json_last_error() == JSON_ERROR_NONE ? $data : FALSE;
   }
 
 
