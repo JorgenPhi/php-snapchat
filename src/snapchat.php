@@ -489,7 +489,9 @@ class Snapchat {
         $timestamp,
       )
     );
-
+    if (strcmp("Sorry! Couldn't find ".$username,$result->message) == 0) {
+      return FALSE;
+    }
     return !empty($result->message);
   }
 
