@@ -498,9 +498,10 @@ class Snapchat {
       )
     );
 
-    if (strpos($result->message,"Sorry! Couldn't find") === 0) {
+    if (strpos($result->message, 'Sorry! Couldn\'t find') === 0) {
       return FALSE;
     }
+
     return !empty($result->message);
   }
 
@@ -1000,7 +1001,7 @@ class Snapchat {
       )
     );
 
-    return $result->param == $setting;
+    return isset($result->param) && $result->param == $setting;
   }
 
 
@@ -1031,7 +1032,7 @@ class Snapchat {
       )
     );
 
-    return (isset($result->param) && $result->param == $email ? TRUE : FALSE);
+    return isset($result->param) && $result->param == $email;
   }
 
 }
