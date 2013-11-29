@@ -190,7 +190,6 @@ class Snapchat {
     // If the cURL request fails, return FALSE. Also check the status code
     // since the API generally won't return friendly errors.
     if ($result === FALSE || curl_getinfo($ch, CURLINFO_HTTP_CODE) != 200) {
-      echo $result;
       curl_close($ch);
       return FALSE;
     }
