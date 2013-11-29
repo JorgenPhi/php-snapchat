@@ -190,6 +190,7 @@ class Snapchat {
     // If the cURL request fails, return FALSE. Also check the status code
     // since the API generally won't return friendly errors.
     if ($result === FALSE || curl_getinfo($ch, CURLINFO_HTTP_CODE) != 200) {
+      echo $result;
       curl_close($ch);
       return FALSE;
     }
@@ -906,6 +907,40 @@ class Snapchat {
     return is_null($result);
   }
 
+  /**
+   * Sets a story.
+   * 
+   * @param $media_id The media ID of the story to set.
+   * @param $media_type The media type of the story to set.
+   * @param $time (optional) The time in seconds the story should be available (1-10). Defaults to 3.
+   * @return TRUE on success or FALSE on failure.
+   */
+  public function setStory($media_id, $media_type, $time = 3) {
+  	// Make sure we're logged in and have a valid access token.
+  	if (!$this->auth_token || !$this->username) {
+  	  return FALSE;
+	}
+	
+	$timestamp = self::timestamp();
+	$result = self::post(
+	  '/post_story',
+	  array(
+	    'client_id' => $media_id,
+	    'media_id' => $media_id,
+	    'time' => $time,
+	    'timestamp' => $timestamp,
+	    'type' => $media_type,
+	    'username' => $this->username,
+	  ),
+	  array(
+	  	$this->auth_token,
+	  	$timestamp,
+	  )
+	);
+	
+	return is_null($result);
+  }
+
 
   /**
    * Gets the best friends and scores of the specified users.
@@ -1036,3 +1071,5 @@ class Snapchat {
   }
 
 }
+
+?>
