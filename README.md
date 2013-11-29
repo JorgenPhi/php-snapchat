@@ -42,12 +42,12 @@ $id = $snapchat->upload(
 );
 $snapchat->send($id, array('stelljes'), 8);
 
-// Upload a story and post it for 8 seconds:
+// Upload a story and post it for 5 seconds:
 $id = $snapchat->upload(
 	Snapchat::MEDIA_VIDEO,
-	file_get_contents('/home/don/whatever.mov')
+	file_get_contents('/home/dan/whatever.mov')
 );
-$snapchat->send($id, Snapchat::MEDIA_VIDEO, 8);
+$snapchat->send($id, Snapchat::MEDIA_VIDEO, 5);
 
 // Destroy the evidence:
 $snapchat->clearFeed();
