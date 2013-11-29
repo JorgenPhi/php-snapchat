@@ -47,7 +47,7 @@ $id = $snapchat->upload(
 	Snapchat::MEDIA_VIDEO,
 	file_get_contents('/home/dan/whatever.mov')
 );
-$snapchat->send($id, Snapchat::MEDIA_VIDEO, 5);
+$snapchat->setStory($id, Snapchat::MEDIA_VIDEO, 5);
 
 // Destroy the evidence:
 $snapchat->clearFeed();
