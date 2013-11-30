@@ -74,16 +74,6 @@ class Snapchat {
     $pad = $blocksize - (strlen($data) % $blocksize);
     return $data . str_repeat(chr($pad), $pad);
   }
-  
-  /** 
-   * Retrieves blob data.
-   *
-   * @param $endpoint The address of the resource being requested (e.g. '/story_blob?' or '/story_thumbnail?').
-   * @returns The blob data.
-   */
-  public function getBlob($endpoint) {
-	  return file_get_contents(self::URL.$endpoint);
-  }
 
 
   /**
@@ -117,17 +107,17 @@ class Snapchat {
    * @return The decrypted data.
    */
   public function AES128DecryptCBC($data, $key, $iv) {
-  	// Decode key and IV
-  	$realIV = base64_decode($iv);
-	$realKey = base64_decode($key);
-  
-	// Decrypt data
-  	$data = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $realKey, $data, MCRYPT_MODE_CBC, $realIV);
-  	$padding = ord($data[strlen($data) - 1]); 
-  	
-  	return substr($data, 0, -$padding); 
+    // Decode key and IV
+    $iv = base64_decode($iv);
+    $key = base64_decode($key);
+
+    // Decrypt data
+    $data = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $key, $data, MCRYPT_MODE_CBC, $iv);
+    $padding = ord($data[strlen($data) - 1]);
+
+    return substr($data, 0, -$padding);
   }
-  
+
 
   /**
    * Implementation of Snapchat's obscure hashing algorithm.
@@ -181,10 +171,20 @@ class Snapchat {
 
 
   /**
-   * Runs a POST request against the API.
+   * Retrieves blob data.
    *
-   * Snapchat appears to only use POST for API requests, so this is really
-   * the only function used to query the API.
+   * @todo Replace with a general-purpose GET function.
+   *
+   * @param $endpoint The address of the resource being requested (e.g. '/story_blob?' or '/story_thumbnail?').
+   * @return The blob data.
+   */
+  public function getBlob($endpoint) {
+    return file_get_contents(self::URL . $endpoint);
+  }
+
+
+  /**
+   * Runs a POST request against the API.
    *
    * @param $endpoint The address of the resource being requested (e.g. '/update_snaps' or '/friend').
    * @param $data An associative array of values to send to the API. A request token is added automatically.
@@ -386,11 +386,11 @@ class Snapchat {
       )
     );
 
-	if($stories) {
-	  if (!empty($result->stories_response)) {
+  if($stories) {
+    if (!empty($result->stories_response)) {
         return $result->stories_response;
       }
-	} else if (!empty($result->updates_response)) {
+  } else if (!empty($result->updates_response)) {
       $this->auth_token = $result->updates_response->auth_token;
       return $result->updates_response;
     }
@@ -941,7 +941,7 @@ class Snapchat {
 
     return is_null($result);
   }
-  
+
 
   /**
    * Sets a story.
@@ -952,32 +952,32 @@ class Snapchat {
    * @return TRUE on success or FALSE on failure.
    */
   public function setStory($media_id, $media_type, $time = 3) {
-  	// Make sure we're logged in and have a valid access token.
-  	if (!$this->auth_token || !$this->username) {
-  	  return FALSE;
-	}
-	
-	$timestamp = self::timestamp();
-	$result = self::post(
-	  '/post_story',
-	  array(
-	    'client_id' => $media_id,
-	    'media_id' => $media_id,
-	    'time' => $time,
-	    'timestamp' => $timestamp,
-	    'type' => $media_type,
-	    'username' => $this->username,
-	  ),
-	  array(
-	  	$this->auth_token,
-	  	$timestamp,
-	  )
-	);
-	
-	return is_null($result);
+    // Make sure we're logged in and have a valid access token.
+    if (!$this->auth_token || !$this->username) {
+      return FALSE;
+    }
+
+    $timestamp = self::timestamp();
+    $result = self::post(
+      '/post_story',
+      array(
+        'client_id' => $media_id,
+        'media_id' => $media_id,
+        'time' => $time,
+        'timestamp' => $timestamp,
+        'type' => $media_type,
+        'username' => $this->username,
+      ),
+      array(
+        $this->auth_token,
+        $timestamp,
+      )
+    );
+    
+    return is_null($result);
   }
-  
-  
+
+
   /**
    * Downloads a story.
    *
@@ -986,39 +986,45 @@ class Snapchat {
    * @param $iv The base64 encoded IV of the story.
    * @return The story data or FALSE on failure.
    */
-   public function getStory($media_id, $key, $iv) {
-	// Make sure we're logged in and have a valid access token.
-  	if (!$this->auth_token || !$this->username) {
-  	  return FALSE;
-	}
-	
-	// Retrieve encrypted story and decrypt.
-	$blob_data = self::getBlob("/story_blob?story_id=".$media_id);
-	$decrypted = self::AES128DecryptCBC($blob_data, $key, $iv);
-	
-	return $decrypted;
-   }
-   
-   
-   /**
-    * Downloads a story's thumbnail.
-    *
-    * @param $media_id The media_id of the story.
-    * @param $key The base64 encoded key of the story.
-    * @param $iv The base64 encoded IV of the thumbnail.
-    * @return The thumbnail data or FALSE on failure.
-    */
+  public function getStory($media_id, $key, $iv) {
+    // Make sure we're logged in and have a valid access token.
+    if (!$this->auth_token || !$this->username) {
+      return FALSE;
+    }
+
+    // Retrieve encrypted story and decrypt.
+    $blob = self::getBlob('/story_blob?story_id=' . $media_id);
+
+    if (!empty($blob)) {
+      return self::AES128DecryptCBC($blob_data, $key, $iv);
+    }
+
+    return FALSE;
+  }
+
+
+  /**
+   * Downloads a story's thumbnail.
+   *
+   * @param $media_id The media_id of the story.
+   * @param $key The base64 encoded key of the story.
+   * @param $iv The base64 encoded IV of the thumbnail.
+   * @return The thumbnail data or FALSE on failure.
+   */
   public function getStoryThumb($media_id, $key, $iv) {
-	// Make sure we're logged in and have a valid access token.
-  	if (!$this->auth_token || !$this->username) {
-  	  return FALSE;
-	}
-	
-	// Retrieve encrypted story and decrypt.
-	$blob_data = self::getBlob("/story_thumbnail?story_id=".$media_id);
-	$decrypted = self::AES128DecryptCBC($blob_data, $key, $iv);
-	
-	return $decrypted;
+    // Make sure we're logged in and have a valid access token.
+    if (!$this->auth_token || !$this->username) {
+      return FALSE;
+    }
+
+    // Retrieve encrypted story and decrypt.
+    $blob = self::getBlob('/story_thumbnail?story_id=' . $media_id);
+
+    if (!empty($blob)) {
+      return self::AES128DecryptCBC($blob_data, $key, $iv);
+    }
+
+    return FALSE;
   }
 
 
@@ -1030,27 +1036,27 @@ class Snapchat {
    * @returns TRUE on success or FALSE on failure.
    */
   public function markStoryViewed($id, $screenshot_count = 0) {
-	// Make sure we're logged in and have a valid access token.
-  	if (!$this->auth_token || !$this->username) {
-  	  return FALSE;
-	}
-	
-	// Mark story as viewed.
-	$timestamp = self::timestamp();
-	$result = self::post(
-	  '/update_stories',
-	  array(
-	  	'friend_stories' => '[{"id":"'.$id.'","screenshot_count":'.$screenshot_count.',"timestamp":'.$timestamp.'}]',
-	  	'timestamp' => $timestamp,
-	    'username' => $this->username,
-	  ),
-	  array(
-	  	$this->auth_token,
-	  	$timestamp,
-	  )
-	);
-	
-	return is_null($result);
+  // Make sure we're logged in and have a valid access token.
+    if (!$this->auth_token || !$this->username) {
+      return FALSE;
+  }
+  
+  // Mark story as viewed.
+  $timestamp = self::timestamp();
+  $result = self::post(
+    '/update_stories',
+    array(
+      'friend_stories' => '[{"id":"'.$id.'","screenshot_count":'.$screenshot_count.',"timestamp":'.$timestamp.'}]',
+      'timestamp' => $timestamp,
+      'username' => $this->username,
+    ),
+    array(
+      $this->auth_token,
+      $timestamp,
+    )
+  );
+  
+  return is_null($result);
   }
   
 
