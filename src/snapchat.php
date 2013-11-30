@@ -364,7 +364,9 @@ class Snapchat {
   /**
    * Retrieves general user, friend, and snap updates.
    *
-   * @param $stories (optional) Retrieve story updates. Defaults to false.
+   * @todo Add separate story function.
+   *
+   * @param $stories (optional) Whether to retrieve story updates. Defaults to FALSE.
    * @return The data returned by the service or FALSE on failure.
    */
   public function getUpdates($stories = FALSE) {
@@ -386,16 +388,17 @@ class Snapchat {
       )
     );
 
-  if($stories) {
-    if (!empty($result->stories_response)) {
+    if ($stories) {
+      if (!empty($result->stories_response)) {
         return $result->stories_response;
       }
-  } else if (!empty($result->updates_response)) {
+    }
+    elseif (!empty($result->updates_response)) {
       $this->auth_token = $result->updates_response->auth_token;
       return $result->updates_response;
     }
 
-     return $result;
+    return $result;
   }
 
 
@@ -1036,29 +1039,35 @@ class Snapchat {
    * @returns TRUE on success or FALSE on failure.
    */
   public function markStoryViewed($id, $screenshot_count = 0) {
-  // Make sure we're logged in and have a valid access token.
+    // Make sure we're logged in and have a valid access token.
     if (!$this->auth_token || !$this->username) {
       return FALSE;
+    }
+
+    // Mark story as viewed.
+    $timestamp = self::timestamp();
+    $result = self::post(
+      '/update_stories',
+      array(
+        'friend_stories' => json_encode(array(
+          array(
+            'id' => $id,
+            'screenshot_count' => $screenshot_count,
+            'timestamp' => $timestamp,
+          ),
+        )),
+        'timestamp' => $timestamp,
+        'username' => $this->username,
+      ),
+      array(
+        $this->auth_token,
+        $timestamp,
+      )
+    );
+
+    return is_null($result);
   }
-  
-  // Mark story as viewed.
-  $timestamp = self::timestamp();
-  $result = self::post(
-    '/update_stories',
-    array(
-      'friend_stories' => '[{"id":"'.$id.'","screenshot_count":'.$screenshot_count.',"timestamp":'.$timestamp.'}]',
-      'timestamp' => $timestamp,
-      'username' => $this->username,
-    ),
-    array(
-      $this->auth_token,
-      $timestamp,
-    )
-  );
-  
-  return is_null($result);
-  }
-  
+
 
   /**
    * Gets the best friends and scores of the specified users.
@@ -1189,5 +1198,3 @@ class Snapchat {
   }
 
 }
-
-?>
