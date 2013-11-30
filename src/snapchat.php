@@ -74,6 +74,16 @@ class Snapchat {
     $pad = $blocksize - (strlen($data) % $blocksize);
     return $data . str_repeat(chr($pad), $pad);
   }
+  
+  /** 
+   * Retrieves blob data.
+   *
+   * @param $endpoint The address of the resource being requested (e.g. '/story_blob?' or '/story_thumbnail?').
+   * @returns The blob data.
+   */
+  public function getBlob($endpoint) {
+	  return file_get_contents(self::URL.$endpoint);
+  }
 
 
   /**
@@ -96,7 +106,34 @@ class Snapchat {
   public function encrypt($data) {
     return mcrypt_encrypt(MCRYPT_RIJNDAEL_128, self::BLOB_ENCRYPTION_KEY, self::pad($data), MCRYPT_MODE_ECB);
   }
-
+  
+  
+  /**
+   * Decrypts story data.
+   *
+   * @param $data The data to decrypt.
+   * @param $key The base64 encoded key.
+   * @param $iv The base64 encoded IV.
+   * @return The decrypted data.
+   */
+  public function AES128DecryptCBC($data, $key, $iv) {
+	// Set the algorithm to AES128 and mode to CBC
+	$td = mcrypt_module_open(MCRYPT_RIJNDAEL_128, '', MCRYPT_MODE_CBC, '');
+	
+	// Decode key and IV
+	$realIV = base64_decode($iv);
+	$realKey = base64_decode($key);
+	
+	// Decrypt data
+	mcrypt_generic_init($td, $realKey, $realIV);
+	$decrypted = mdecrypt_generic($td, $data);
+		
+	mcrypt_generic_deinit($td);
+	mcrypt_module_close($td);
+	
+	return trim($decrypted);
+  }
+  
 
   /**
    * Implementation of Snapchat's obscure hashing algorithm.
@@ -333,9 +370,10 @@ class Snapchat {
   /**
    * Retrieves general user, friend, and snap updates.
    *
+   * @param $stories (optional) Retrieve story updates. Defaults to false.
    * @return The data returned by the service or FALSE on failure.
    */
-  public function getUpdates() {
+  public function getUpdates($stories = FALSE) {
     // Make sure we're logged in and have a valid access token.
     if (!$this->auth_token || !$this->username) {
       return FALSE;
@@ -354,7 +392,11 @@ class Snapchat {
       )
     );
 
-    if (!empty($result->updates_response)) {
+	if($stories) {
+	  if (!empty($result->stories_response)) {
+        return $result->stories_response;
+      }
+	} else if (!empty($result->updates_response)) {
       $this->auth_token = $result->updates_response->auth_token;
       return $result->updates_response;
     }
@@ -905,6 +947,7 @@ class Snapchat {
 
     return is_null($result);
   }
+  
 
   /**
    * Sets a story.
@@ -939,7 +982,83 @@ class Snapchat {
 	
 	return is_null($result);
   }
+  
+  
+  /**
+   * Downloads a story.
+   *
+   * @param $media_id The media_id of the story.
+   * @param $key The base64 encoded key of the story.
+   * @param $iv The base64 encoded IV of the story.
+   * @return The story data or FALSE on failure.
+   */
+   public function getStory($media_id, $key, $iv) {
+	// Make sure we're logged in and have a valid access token.
+  	if (!$this->auth_token || !$this->username) {
+  	  return FALSE;
+	}
+	
+	// Retrieve encrypted story and decrypt.
+	$blob_data = self::getBlob("/story_blob?story_id=".$media_id);
+	$decrypted = self::AES128DecryptCBC($blob_data, $key, $iv);
+	
+	return $decrypted;
+   }
+   
+   
+   /**
+    * Downloads a story's thumbnail.
+    *
+    * @param $media_id The media_id of the story.
+    * @param $key The base64 encoded key of the story.
+    * @param $iv The base64 encoded IV of the thumbnail.
+    * @return The thumbnail data or FALSE on failure.
+    */
+  public function getStoryThumb($media_id, $key, $iv) {
+	// Make sure we're logged in and have a valid access token.
+  	if (!$this->auth_token || !$this->username) {
+  	  return FALSE;
+	}
+	
+	// Retrieve encrypted story and decrypt.
+	$blob_data = self::getBlob("/story_thumbnail?story_id=".$media_id);
+	$decrypted = self::AES128DecryptCBC($blob_data, $key, $iv);
+	
+	return $decrypted;
+  }
 
+
+  /**
+   * Marks a story as viewed
+   *
+   * @param $id The ID of the story.
+   * @param $screenshot_count (optional) Amount of times screenshotted. Defualts to 0.
+   * @returns TRUE on success or FALSE on failure.
+   */
+  public function markStoryViewed($id, $screenshot_count = 0) {
+	// Make sure we're logged in and have a valid access token.
+  	if (!$this->auth_token || !$this->username) {
+  	  return FALSE;
+	}
+	
+	// Mark story as viewed.
+	$timestamp = self::timestamp();
+	$result = self::post(
+	  '/update_stories',
+	  array(
+	  	'friend_stories' => '[{"id":"'.$id.'","screenshot_count":'.$screenshot_count.',"timestamp":'.$timestamp.'}]',
+	  	'timestamp' => $timestamp,
+	    'username' => $this->username,
+	  ),
+	  array(
+	  	$this->auth_token,
+	  	$timestamp,
+	  )
+	);
+	
+	return is_null($result);
+  }
+  
 
   /**
    * Gets the best friends and scores of the specified users.

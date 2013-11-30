@@ -29,8 +29,17 @@ $snaps = $snapchat->getSnaps();
 $data = $snapchat->getMedia('122FAST2FURIOUS334r');
 file_put_contents('/home/dan/snap.jpg', $data);
 
+// Download a specific story:
+$data = $snapchat->getStory('[story_media_id]', '[story_key]', '[story_iv]');
+
+// Download a specific story's thumbnail:
+$data = $snapchat->getStoryThumb('[story_media_id]', '[story_key]', '[thumbnail_iv]');
+
 // Mark the snap as viewed:
 $snapchat->markSnapViewed('122FAST2FURIOUS334r');
+
+// Mark the story as viewed:
+$snapchat->markStoryViewed('[story_id]')
 
 // Screenshot!
 $snapchat->markSnapShot('122FAST2FURIOUS334r');
