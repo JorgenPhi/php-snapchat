@@ -117,21 +117,15 @@ class Snapchat {
    * @return The decrypted data.
    */
   public function AES128DecryptCBC($data, $key, $iv) {
-	// Set the algorithm to AES128 and mode to CBC
-	$td = mcrypt_module_open(MCRYPT_RIJNDAEL_128, '', MCRYPT_MODE_CBC, '');
-	
-	// Decode key and IV
-	$realIV = base64_decode($iv);
+  	// Decode key and IV
+  	$realIV = base64_decode($iv);
 	$realKey = base64_decode($key);
-	
+  
 	// Decrypt data
-	mcrypt_generic_init($td, $realKey, $realIV);
-	$decrypted = mdecrypt_generic($td, $data);
-		
-	mcrypt_generic_deinit($td);
-	mcrypt_module_close($td);
-	
-	return trim($decrypted);
+  	$data = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $realKey, $data, MCRYPT_MODE_CBC, $realIV);
+  	$padding = ord($data[strlen($data) - 1]); 
+  	
+  	return substr($data, 0, -$padding); 
   }
   
 
