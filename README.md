@@ -39,7 +39,7 @@ $data = $snapchat->getStoryThumb('[story_media_id]', '[story_key]', '[thumbnail_
 $snapchat->markSnapViewed('122FAST2FURIOUS334r');
 
 // Mark the story as viewed:
-$snapchat->markStoryViewed('[story_id]')
+$snapchat->markStoryViewed('[story_id]');
 
 // Screenshot!
 $snapchat->markSnapShot('122FAST2FURIOUS334r');
