@@ -32,13 +32,23 @@ class Snapchat {
 
 
   /**
-   * Sets up some initial variables.
+   * Sets up some initial variables. If a username and password are passed in,
+   * we attempt to log in. If a username and auth token are passed in, we'll
+   * bypass the login process and use those values.
    */
-  public function __construct($username = NULL, $password = NULL) {
+  public function __construct($username = NULL, $password = NULL, $auth_token = NULL) {
     $this->auth_token = FALSE;
     $this->username = FALSE;
 
-    if (!empty($username)) $this->login($username, $password);
+    if (!empty($username)) {
+      if (!empty($password)) {
+        $this->login($username, $password);
+      }
+      elseif (!empty($auth_token)) {
+        $this->auth_token = $auth_token;
+        $this->username = $username;
+      }
+    }
   }
 
 
