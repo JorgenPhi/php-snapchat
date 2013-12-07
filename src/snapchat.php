@@ -1009,7 +1009,7 @@ class Snapchat {
     $blob = self::getBlob('/story_blob?story_id=' . $media_id);
 
     if (!empty($blob)) {
-      return self::AES128DecryptCBC($blob_data, $key, $iv);
+      return self::AES128DecryptCBC($blob, $key, $iv);
     }
 
     return FALSE;
@@ -1034,7 +1034,7 @@ class Snapchat {
     $blob = self::getBlob('/story_thumbnail?story_id=' . $media_id);
 
     if (!empty($blob)) {
-      return self::AES128DecryptCBC($blob_data, $key, $iv);
+      return self::AES128DecryptCBC($blob, $key, $iv);
     }
 
     return FALSE;
