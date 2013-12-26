@@ -25,6 +25,9 @@ $snapchat = new Snapchat('username', 'password');
 // Get your feed:
 $snaps = $snapchat->getSnaps();
 
+// Get your friends' stories:
+$snaps = $snapchat->getFriendStories();
+
 // Download a specific snap:
 $data = $snapchat->getMedia('122FAST2FURIOUS334r');
 file_put_contents('/home/dan/snap.jpg', $data);

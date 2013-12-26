@@ -1,6 +1,7 @@
 <?php
 
 include_once dirname(__FILE__) . '/snapchat_agent.php';
+include_once dirname(__FILE__) . '/snapchat_cache.php';
 
 /**
  * @file
@@ -103,6 +104,11 @@ class Snapchat extends SnapchatAgent {
       )
     );
 
+    if (!empty($result)) {
+      $this->cache = new SnapchatCache();
+      $this->cache->set('updates', $result);
+    }
+
     // If the server sends back an auth token, remember it.
     if (!empty($result->auth_token)) {
       $this->auth_token = $result->auth_token;
@@ -140,6 +146,9 @@ class Snapchat extends SnapchatAgent {
         $timestamp,
       )
     );
+
+    // Clear out the cache in case the instance is recycled.
+    $this->cache = NULL;
 
     return is_null($result);
   }
@@ -213,18 +222,21 @@ class Snapchat extends SnapchatAgent {
   /**
    * Retrieves general user, friend, and snap updates.
    *
-   * @todo
-   *   Add separate story function.
-   * @todo
-   *   Cache update results.
-   *
-   * @param bool $stories
-   *   Whether to retrieve story updates. Defaults to FALSE.
+   * @param bool $force
+   *   Forces an update even if there's fresh data in the cache. Defaults
+   *   to FALSE.
    *
    * @return mixed
    *   The data returned by the service or FALSE on failure.
    */
-  public function getUpdates($stories = FALSE) {
+  public function getUpdates($force = FALSE) {
+    if (!$force) {
+      $result = $this->cache->get('updates');
+      if ($result) {
+        return $result;
+      }
+    }
+
     // Make sure we're logged in and have a valid access token.
     if (!$this->auth_token || !$this->username) {
       return FALSE;
@@ -243,13 +255,9 @@ class Snapchat extends SnapchatAgent {
       )
     );
 
-    if ($stories) {
-      if (!empty($result->stories_response)) {
-        return $result->stories_response;
-      }
-    }
-    elseif (!empty($result->updates_response)) {
+    if (!empty($result->updates_response)) {
       $this->auth_token = $result->updates_response->auth_token;
+      $this->cache->set('updates', $result->updates_response);
       return $result->updates_response;
     }
 
@@ -292,6 +300,59 @@ class Snapchat extends SnapchatAgent {
     }
 
     return $snaps;
+  }
+
+  /**
+   * Gets friends' stories.
+   *
+   * @param bool $force
+   *   Forces an update even if there's fresh data in the cache. Defaults
+   *   to FALSE.
+   *
+   * @return mixed
+   *   An array of stories or FALSE on failure.
+   */
+  function getFriendStories($force = FALSE) {
+    if (!$force) {
+      $result = $this->cache->get('stories');
+      if ($result) {
+        return $result;
+      }
+    }
+
+    // Make sure we're logged in and have a valid access token.
+    if (!$this->auth_token || !$this->username) {
+      return FALSE;
+    }
+
+    $timestamp = parent::timestamp();
+    $result = parent::post(
+      '/all_updates',
+      array(
+        'timestamp' => $timestamp,
+        'username' => $this->username,
+      ),
+      array(
+        $this->auth_token,
+        $timestamp,
+      )
+    );
+
+    if (!empty($result->stories_response)) {
+      $this->cache->set('stories', $result->stories_response);
+    }
+    else {
+      return FALSE;
+    }
+
+    $stories = array();
+    foreach ($result->stories_response->friend_stories as $group) {
+      foreach ($group->stories as $story) {
+        $stories[] = $story->story;
+      }
+    }
+
+    return $stories;
   }
 
   /**
