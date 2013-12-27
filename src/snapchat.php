@@ -73,6 +73,7 @@ class Snapchat extends SnapchatAgent {
     }
     elseif (!empty($auth_token)) {
       $this->auth_token = $auth_token;
+      $this->cache = new SnapchatCache();
       $this->username = $username;
     }
   }
