@@ -105,19 +105,15 @@ class Snapchat extends SnapchatAgent {
       )
     );
 
-    if (!empty($result)) {
-      $this->cache = new SnapchatCache();
-      $this->cache->set('updates', $result);
-    }
-
-    // If the server sends back an auth token, remember it.
-    if (!empty($result->auth_token)) {
+    // If 'logged' is true (aka successful login), set the auth_token
+    if ($result->logged) {
       $this->auth_token = $result->auth_token;
     }
 
-    // Store the logged in user.
-    if (!empty($result->username)) {
-      $this->username = $result->username;
+    // Set cache
+    if (!empty($result)) {
+      $this->cache = new SnapchatCache();
+      $this->cache->set('updates', $result);
     }
 
     return $result;
