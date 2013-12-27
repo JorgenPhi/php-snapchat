@@ -105,8 +105,9 @@ class Snapchat extends SnapchatAgent {
       )
     );
 
-    // If 'logged' is true (aka successful login), set the auth_token
+    // If 'logged' is true (aka successful login), set the username and auth_token
     if ($result->logged) {
+      $this->username = $result->username;
       $this->auth_token = $result->auth_token;
     }
 
