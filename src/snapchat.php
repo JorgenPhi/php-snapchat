@@ -862,6 +862,8 @@ class Snapchat extends SnapchatAgent {
 			TRUE
 		);
 
+		unlink($temp);
+
 		return is_null($result) ? $media_id : FALSE;
 	}
 
