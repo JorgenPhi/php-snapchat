@@ -112,6 +112,8 @@ class Snapchat extends SnapchatAgent {
 
 			$this->cache = new SnapchatCache();
 			$this->cache->set('updates', $result);
+
+			return $result;
 		}
 		else {
 			return FALSE;
@@ -367,33 +369,36 @@ class Snapchat extends SnapchatAgent {
 	 *   An array of user objects or FALSE on failure.
 	 */
 	public function findFriends($numbers, $country = 'US') {
-		$numbers = array_flip($numbers);
+		$batches = array_chunk(array_flip($numbers), 30, TRUE);
 
 		// Make sure we're logged in and have a valid access token.
 		if (!$this->auth_token || !$this->username) {
 			return FALSE;
 		}
 
-		$timestamp = parent::timestamp();
-		$result = parent::post(
-			'/find_friends',
-			array(
-				'countryCode' => $country,
-				'numbers' => json_encode($numbers),
-				'timestamp' => $timestamp,
-				'username' => $this->username,
-			),
-			array(
-				$this->auth_token,
-				$timestamp,
-			)
-		);
+		$results = array();
+		foreach ($batches as $batch) {
+			$timestamp = parent::timestamp();
+			$result = parent::post(
+				'/find_friends',
+				array(
+					'countryCode' => $country,
+					'numbers' => json_encode($batch),
+					'timestamp' => $timestamp,
+					'username' => $this->username,
+				),
+				array(
+					$this->auth_token,
+					$timestamp,
+				)
+			);
 
-		if (isset($result->results)) {
-			return $result->results;
+			if (isset($result->results)) {
+				$results = $results + $result->results;
+			}
 		}
 
-		return $result;
+		return $results;
 	}
 
 	/**
