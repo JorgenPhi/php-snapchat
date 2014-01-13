@@ -128,7 +128,7 @@ class Snapchat extends SnapchatAgent {
 	 */
 	public function logout() {
 		// Make sure we're logged in and have a valid access token.
-		if (!$this->auth_token || !$this->username) {
+		if (!userVerified()) {
 			return FALSE;
 		}
 
@@ -218,6 +218,17 @@ class Snapchat extends SnapchatAgent {
 	}
 
 	/**
+	 * Checks if the user is logged in and has a valid auth token.
+	 * 
+	 * @return TRUE if the user is verified, FALSE otherwise
+	 */
+	 public function userVerified()
+	 {
+	 	return ($this->auth_token && $this->username);
+	 }
+
+
+	/**
 	 * Retrieves general user, friend, and snap updates.
 	 *
 	 * @param bool $force
@@ -227,7 +238,7 @@ class Snapchat extends SnapchatAgent {
 	 * @return mixed
 	 *   The data returned by the service or FALSE on failure.
 	 */
-	public function getUpdates($force = FALSE) {
+	 public function getUpdates($force = FALSE) {
 		if (!$force) {
 			$result = $this->cache->get('updates');
 			if ($result) {
@@ -236,7 +247,7 @@ class Snapchat extends SnapchatAgent {
 		}
 
 		// Make sure we're logged in and have a valid access token.
-		if (!$this->auth_token || !$this->username) {
+		if (!userVerified()) {
 			return FALSE;
 		}
 
@@ -319,7 +330,7 @@ class Snapchat extends SnapchatAgent {
 		}
 
 		// Make sure we're logged in and have a valid access token.
-		if (!$this->auth_token || !$this->username) {
+		if (!userVerified()) {
 			return FALSE;
 		}
 
@@ -372,7 +383,7 @@ class Snapchat extends SnapchatAgent {
 		$batches = array_chunk(array_flip($numbers), 30, TRUE);
 
 		// Make sure we're logged in and have a valid access token.
-		if (!$this->auth_token || !$this->username) {
+		if (!userVerified()) {
 			return FALSE;
 		}
 
@@ -444,7 +455,7 @@ class Snapchat extends SnapchatAgent {
 	 */
 	public function addFriend($username) {
 		// Make sure we're logged in and have a valid access token.
-		if (!$this->auth_token || !$this->username) {
+		if (!userVerified()) {
 			return FALSE;
 		}
 
@@ -482,7 +493,7 @@ class Snapchat extends SnapchatAgent {
 	 */
 	public function addFriends($usernames) {
 		// Make sure we're logged in and have a valid access token.
-		if (!$this->auth_token || !$this->username) {
+		if (!userVerified()) {
 			return FALSE;
 		}
 
@@ -530,7 +541,7 @@ class Snapchat extends SnapchatAgent {
 	 */
 	public function deleteFriend($username) {
 		// Make sure we're logged in and have a valid access token.
-		if (!$this->auth_token || !$this->username) {
+		if (!userVerified()) {
 			return FALSE;
 		}
 
@@ -565,7 +576,7 @@ class Snapchat extends SnapchatAgent {
 	 */
 	public function setDisplayName($username, $display) {
 		// Make sure we're logged in and have a valid access token.
-		if (!$this->auth_token || !$this->username) {
+		if (!userVerified()) {
 			return FALSE;
 		}
 
@@ -599,7 +610,7 @@ class Snapchat extends SnapchatAgent {
 	 */
 	public function block($username) {
 		// Make sure we're logged in and have a valid access token.
-		if (!$this->auth_token || !$this->username) {
+		if (!userVerified()) {
 			return FALSE;
 		}
 
@@ -632,7 +643,7 @@ class Snapchat extends SnapchatAgent {
 	 */
 	public function unblock($username) {
 		// Make sure we're logged in and have a valid access token.
-		if (!$this->auth_token || !$this->username) {
+		if (!userVerified()) {
 			return FALSE;
 		}
 
@@ -666,7 +677,7 @@ class Snapchat extends SnapchatAgent {
 	 */
 	public function getMedia($id) {
 		// Make sure we're logged in and have a valid access token.
-		if (!$this->auth_token || !$this->username) {
+		if (!userVerified()) {
 			return FALSE;
 		}
 
@@ -712,7 +723,7 @@ class Snapchat extends SnapchatAgent {
 	 */
 	public function sendEvents($events, $snap_info = array()) {
 		// Make sure we're logged in and have a valid access token.
-		if (!$this->auth_token || !$this->username) {
+		if (!userVerified()) {
 			return FALSE;
 		}
 
@@ -837,7 +848,7 @@ class Snapchat extends SnapchatAgent {
 	 */
 	public function upload($type, $data) {
 		// Make sure we're logged in and have a valid access token.
-		if (!$this->auth_token || !$this->username) {
+		if (!userVerified()) {
 			return FALSE;
 		}
 
@@ -887,7 +898,7 @@ class Snapchat extends SnapchatAgent {
 	 */
 	public function send($media_id, $recipients, $time = 3) {
 		// Make sure we're logged in and have a valid access token.
-		if (!$this->auth_token || !$this->username) {
+		if (!userVerified()) {
 			return FALSE;
 		}
 
@@ -925,7 +936,7 @@ class Snapchat extends SnapchatAgent {
 	 */
 	public function setStory($media_id, $media_type, $time = 3) {
 		// Make sure we're logged in and have a valid access token.
-		if (!$this->auth_token || !$this->username) {
+		if (!userVerified()) {
 			return FALSE;
 		}
 
@@ -964,7 +975,7 @@ class Snapchat extends SnapchatAgent {
 	 */
 	public function getStory($media_id, $key, $iv) {
 		// Make sure we're logged in and have a valid access token.
-		if (!$this->auth_token || !$this->username) {
+		if (!userVerified()) {
 			return FALSE;
 		}
 
@@ -993,7 +1004,7 @@ class Snapchat extends SnapchatAgent {
 	 */
 	public function getStoryThumb($media_id, $key, $iv) {
 		// Make sure we're logged in and have a valid access token.
-		if (!$this->auth_token || !$this->username) {
+		if (!userVerified()) {
 			return FALSE;
 		}
 
@@ -1020,7 +1031,7 @@ class Snapchat extends SnapchatAgent {
 	 */
 	public function markStoryViewed($id, $screenshot_count = 0) {
 		// Make sure we're logged in and have a valid access token.
-		if (!$this->auth_token || !$this->username) {
+		if (!userVerified()) {
 			return FALSE;
 		}
 
@@ -1059,7 +1070,7 @@ class Snapchat extends SnapchatAgent {
 	 */
 	public function getBests($friends) {
 		// Make sure we're logged in and have a valid access token.
-		if (!$this->auth_token || !$this->username) {
+		if (!userVerified()) {
 			return FALSE;
 		}
 
@@ -1097,7 +1108,7 @@ class Snapchat extends SnapchatAgent {
 	 */
 	public function clearFeed() {
 		// Make sure we're logged in and have a valid access token.
-		if (!$this->auth_token || !$this->username) {
+		if (!userVerified()) {
 			return FALSE;
 		}
 
@@ -1128,7 +1139,7 @@ class Snapchat extends SnapchatAgent {
 	 */
 	public function updatePrivacy($setting) {
 		// Make sure we're logged in and have a valid access token.
-		if (!$this->auth_token || !$this->username) {
+		if (!userVerified()) {
 			return FALSE;
 		}
 
@@ -1161,7 +1172,7 @@ class Snapchat extends SnapchatAgent {
 	 */
 	public function updateEmail($email) {
 		// Make sure we're logged in and have a valid access token.
-		if (!$this->auth_token || !$this->username) {
+		if (!userVerified()) {
 			return FALSE;
 		}
 
