@@ -121,6 +121,15 @@ class Snapchat extends SnapchatAgent {
 	}
 
 	/**
+	 * Checks if the user is logged in and has a valid auth token.
+	 * 
+	 * @return TRUE if the user is verified, FALSE otherwise
+	 */
+	public function userVerified() {
+	 	return ($this->auth_token && $this->username);
+	 }
+	 
+	/**
 	 * Logs out the current user.
 	 *
 	 * @return bool
@@ -216,17 +225,6 @@ class Snapchat extends SnapchatAgent {
 
 		return $result;
 	}
-
-	/**
-	 * Checks if the user is logged in and has a valid auth token.
-	 * 
-	 * @return TRUE if the user is verified, FALSE otherwise
-	 */
-	 public function userVerified()
-	 {
-	 	return ($this->auth_token && $this->username);
-	 }
-
 
 	/**
 	 * Retrieves general user, friend, and snap updates.
