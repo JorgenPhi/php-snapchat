@@ -468,7 +468,7 @@ class Snapchat extends SnapchatAgent {
                         return FALSE;
                 }
 
-                return !empty($result->message);
+                return TRUE;
         }
 
         /**
