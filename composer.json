@@ -1,5 +1,5 @@
 {
-    "name": "dstelljes/php-snapchat",
+    "name": "JorgenPhi/php-snapchat",
     "description": "A PHP library for the Snapchat API",
     "keywords": ["snapchat"],
     "type": "library",
