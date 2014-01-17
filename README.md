@@ -1,6 +1,6 @@
 Snapchat for PHP
 ================
-[![Build Status](https://travis-ci.org/dstelljes/php-snapchat.png)](https://travis-ci.org/dstelljes/php-snapchat)
+[![Build Status](https://travis-ci.org/JorgenPhi/php-snapchat.png)](https://travis-ci.org/JorgenPhi/php-snapchat)
 
 This library is built to communicate with the Snapchat API. It is nearly
 feature complete but still lacks some functionality available in the latest
