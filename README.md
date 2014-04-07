@@ -118,3 +118,7 @@ License
 ------------
 
 MIT
+
+Original Author:  Daniel Stelljes
+
+This repo is a lifeboat of dstelljes/php-snapchat and contains commit history. 
