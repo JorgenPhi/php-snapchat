@@ -10,7 +10,8 @@ It's similar to the [excellent Snaphax library](http://github.com/tlack/snaphax)
 built by Thomas Lackner <[@tlack](http://twitter.com/tlack)>, but the approach
 is different enough that I figured it deserved its own repo.
 
-We could use more developers to submit pull requests. 
+We love it when developers add new features, fix bugs, and submit pull requests.
+(We need more pull requests!)
 
 
 Usage
