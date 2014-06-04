@@ -2,13 +2,15 @@ Snapchat for PHP
 ================
 [![Build Status](https://travis-ci.org/JorgenPhi/php-snapchat.png)](https://travis-ci.org/JorgenPhi/php-snapchat)
 
-This library is built to communicate with the Snapchat API. It is nearly
-feature complete but still lacks some functionality available in the latest
-versions of the official apps (namely Stories).
+This library is built to communicate with the Snapchat API. It was nearly
+feature complete and lacks some newer functionality available in the latest
+versions of the official apps (stories, text messages, and "chat").
 
 It's similar to the [excellent Snaphax library](http://github.com/tlack/snaphax)
 built by Thomas Lackner <[@tlack](http://twitter.com/tlack)>, but the approach
 is different enough that I figured it deserved its own repo.
+
+We could use more developers to submit pull requests. 
 
 
 Usage
