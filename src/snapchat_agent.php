@@ -221,7 +221,10 @@ abstract class SnapchatAgent {
 	 *   Array containing both file contents, or FALSE if couldn't extract.
 	 */
 	function unCompress($data) {
-		$resource = zip_open($data);
+		if (!file_put_contents("./temp", $data)) {
+			exit('Should have write access to own folder');
+		}
+		$resource = zip_open("./temp");
 		$result = FALSE;
 		if (is_resource($resource)) {
 			while($zip_entry = zip_read($resource)) {
@@ -235,6 +238,7 @@ abstract class SnapchatAgent {
 			}
 			zip_close($resource);
 		}
+		
 		return $result;
 	}
 
