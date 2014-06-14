@@ -708,9 +708,9 @@ class Snapchat extends SnapchatAgent {
 			//fail and would've returned "FALSE".
 			if (parent::isCompressed(substr($result, 0, 2))) {
 				//Uncompress
-				@result_array = parent::unCompress($result);
+				$result_array = parent::unCompress($result);
 				//Return Media and Overlay
-				return @result_array;
+				return $result_array;
 			}
 		}
 
