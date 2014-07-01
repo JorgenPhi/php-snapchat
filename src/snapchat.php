@@ -665,6 +665,11 @@ class Snapchat extends SnapchatAgent {
 	 *
 	 * @return mixed
 	 *   The snap data or FALSE on failure.
+	 *     Snap data can returned as an Array of more than one file.
+	 * 	array(
+	 * 		overlay~zip-CE6F660A-4A9F-4BD6-8183-245C9C75B8A0    => overlay_file_data,
+	 *		media~zip-CE6F660A-4A9F-4BD6-8183-245C9C75B8A0	    => m4v_file_data
+	 * 	)
 	 */
 	public function getMedia($id) {
 		// Make sure we're logged in and have a valid access token.
@@ -693,6 +698,18 @@ class Snapchat extends SnapchatAgent {
 			$result = parent::decryptECB($result);
 
 			if (parent::isMedia(substr($result, 0, 2))) {
+				return $result;
+			}
+			
+			//When a snapchat video is sent with "text" or overlay
+			//the overlay is a transparent PNG file Zipped together
+			//with the M4V file.
+			//First two bytes are "PK" x50x4B; thus the previous media check
+			//will fail and would've returned a FALSE on an available media.
+			if (parent::isCompressed(substr($result, 0, 2))) {
+				//Uncompress
+				$result = parent::unCompress($result);
+				//Return Media and Overlay
 				return $result;
 			}
 		}
