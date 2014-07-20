@@ -257,7 +257,9 @@ class Snapchat extends SnapchatAgent {
 
 		if (!empty($result->updates_response)) {
 			$this->auth_token = $result->updates_response->auth_token;
-			$this->cache->set('updates', $result->updates_response);
+			if (isset($this->cache)) {
+				$this->cache->set('updates', $result->updates_response);
+			}
 			return $result->updates_response;
 		}
 
@@ -338,7 +340,7 @@ class Snapchat extends SnapchatAgent {
 			)
 		);
 
-		if (!empty($result->stories_response)) {
+		if (isset($this->cache) && !empty($result->stories_response)) {
 			$this->cache->set('stories', $result->stories_response);
 		}
 		else {
