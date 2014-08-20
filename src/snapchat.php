@@ -555,6 +555,42 @@ class Snapchat extends SnapchatAgent {
 	}
 
 	/**
+	 * Deletes multiple friends.
+	 *
+	 * @param array $usernames
+	 *   Usernames of friends to delete.
+	 *
+	 * @return bool
+	 *   TRUE if successful, FALSE otherwise.
+	 */
+	public function deleteFriends($usernames) {
+		// Make sure we're logged in and have a valid access token.
+		if (!$this->auth_token || !$this->username) {
+			return FALSE;
+		}
+
+		$timestamp = parent::timestamp();
+		$result = parent::post(
+			'/friend',
+			array(
+				'action' => 'multiadddelete',
+				'friend' => json_encode(array(
+					'friendsToAdd' => array(),
+					'friendsToDelete' => $usernames,
+				)),
+				'timestamp' => $timestamp,
+				'username' => $this->username,
+			),
+			array(
+				$this->auth_token,
+				$timestamp,
+			)
+		);
+
+		return !empty($result->message);
+	}
+
+	/**
 	 * Sets a friend's display name.
 	 *
 	 * @param string $username
