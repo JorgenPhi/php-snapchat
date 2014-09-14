@@ -17,6 +17,8 @@
         "ext-mcrypt": "*"
     },
     "autoload": {
-        "classmap": ["src/"]
+        "psr-4": {
+            "": "src"
+        }
     }
 }
