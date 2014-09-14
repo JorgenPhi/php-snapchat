@@ -1,11 +1,8 @@
 <?php
 
-include_once dirname(__FILE__) . '/snapchat_agent.php';
-include_once dirname(__FILE__) . '/snapchat_cache.php';
 
 /**
- * @file
- *   Provides an implementation of the undocumented Snapchat API.
+ * @class Provides an implementation of the undocumented Snapchat API.
  */
 class Snapchat extends SnapchatAgent {
 
