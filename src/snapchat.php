@@ -939,8 +939,8 @@ class Snapchat extends SnapchatAgent {
 	 * @param int $time
 	 *   The time in seconds the story should be available (1-10). Defaults to 3.
 	 *
-	 * @return bool
-	 *   TRUE if successful, FALSE otherwise.
+	 * @return mixed
+	 *   The story data or FALSE on failure.
 	 */
 	public function setStory($media_id, $media_type, $time = 3) {
 		// Make sure we're logged in and have a valid access token.
@@ -965,7 +965,7 @@ class Snapchat extends SnapchatAgent {
 			)
 		);
 
-		return is_null($result);
+		return $result;
 	}
 
 	/**
