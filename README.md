@@ -2,16 +2,13 @@ Snapchat for PHP
 ================
 [![Build Status](https://travis-ci.org/JorgenPhi/php-snapchat.png)](https://travis-ci.org/JorgenPhi/php-snapchat)
 
-This library is built to communicate with the Snapchat API. It was nearly
-feature complete and lacks some newer functionality available in the latest
-versions of the official apps (stories, text messages, and "chat").
+This library is built to communicate with the Snapchat API. It is nearly
+feature complete but still lacks some functionality available in the latest
+versions of the official apps (namely Stories).
 
 It's similar to the [excellent Snaphax library](http://github.com/tlack/snaphax)
 built by Thomas Lackner <[@tlack](http://twitter.com/tlack)>, but the approach
 is different enough that I figured it deserved its own repo.
-
-We love it when developers add new features, fix bugs, and submit pull requests.
-(We need more pull requests!)
 
 
 Usage
@@ -33,7 +30,7 @@ $snaps = $snapchat->getFriendStories();
 
 // Download a specific snap:
 $data = $snapchat->getMedia('122FAST2FURIOUS334r');
-file_put_contents('/home/jorgen/snap.jpg', $data);
+file_put_contents('/home/dan/snap.jpg', $data);
 
 // Download a specific story:
 $data = $snapchat->getStory('[story_media_id]', '[story_key]', '[story_iv]');
@@ -53,14 +50,14 @@ $snapchat->markSnapShot('122FAST2FURIOUS334r');
 // Upload a snap and send it to me for 8 seconds:
 $id = $snapchat->upload(
 	Snapchat::MEDIA_IMAGE,
-	file_get_contents('/home/jorgen/whatever.jpg')
+	file_get_contents('/home/dan/whatever.jpg')
 );
-$snapchat->send($id, array('jorgenphi'), 8);
+$snapchat->send($id, array('stelljes'), 8);
 
 // Upload a video story:
 $id = $snapchat->upload(
 	Snapchat::MEDIA_VIDEO,
-	file_get_contents('/home/jorgen/whatever.mov')
+	file_get_contents('/home/dan/whatever.mov')
 );
 $snapchat->setStory($id, Snapchat::MEDIA_VIDEO);
 
@@ -101,10 +98,92 @@ $snapchat->deleteFriend('bart');
 $snapchat->updatePrivacy(Snapchat::PRIVACY_FRIENDS);
 
 // You want to change your email:
-$snapchat->updateEmail('jorgen@example.com');
+$snapchat->updateEmail('dan@example.com');
 
 // Log out:
 $snapchat->logout();
+
+?>
+```
+
+##Snaptcha
+
+Below is an example on how to bypass the "Snaptcha" made by Snapchat.
+This fork includes two new methods.
+
+getCaptcha()
+
+and
+
+sendCaptcha()
+
+[The new endpoints are discussed in more detail here](http://www.hakobaito.co.uk/b/bypassing-snaptcha)
+
+Example:
+
+```php
+<?php
+
+/*
+Snaptcha Bypass sample
+hako 2014
+*/
+
+include 'src/snapchat.php';
+
+// dummy variables.
+$email = "snaptchabypassexample@gmail.com";
+$password = "snaptchabypassexamplepass";
+$birthday = "1933-05-13";
+$username = "snaptchauser";
+
+$s = new Snapchat();
+$s->register($email,$password,$birthday); // Register an account...
+$registration = $s->register_username($email, $username); // Register desired username...
+
+// registration check...
+if(is_int($registration)) {
+
+	if ($registration == 69) {
+		print "username is too short!\n";
+		exit();
+	}
+
+	else if ($registration == 70) {
+		print "username is too long!\n";
+		exit();
+	}
+
+	else if ($registration == 71) {
+		print "bad username\n";
+		exit();
+	}
+
+	else if ($registration == 72) {
+		print "username is taken!\n";
+		exit();
+	}
+}
+
+$captcha_id = $s->getCaptcha($username, true);	// verify yourself...
+
+//   Ask the user for the captcha,
+//  (should be replaced with respected ghost images)...
+//  returns false if unable to get the captcha_id.
+
+print $captcha_id . "\n";
+echo "captcha: ";
+$solution_raw = fgets(STDIN); // Solution is 9 characters long eg. 001010011
+$solution = str_replace("\n", "", $solution_raw); // strip off invisible characters.
+$verify = $s->sendCaptcha($solution, $captcha_id, $username); // Send off Snaptcha.
+
+// Check if Snaptcha is correct...
+if($verify == TRUE) {
+    print "Snaptcha passed, Snapchat account verified.";
+}
+else if($verify == FALSE) {
+    print "Incorrect Snaptcha, Snapchat account not verified.";
+}
 
 ?>
 ```
