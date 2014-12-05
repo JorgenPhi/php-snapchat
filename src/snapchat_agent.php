@@ -8,10 +8,10 @@
 abstract class SnapchatAgent {
 
 	/*
-	 * App version (as of 2013-11-20). Before updating this value, confirm
+	 * App version (as of 2014-12-5). Before updating this value, confirm
 	 * that the library requests everything in the same way as the app.
 	 */
-	const VERSION = '4.1.07';
+	const VERSION = '8.0.1.3';
 
 	/*
 	 * The API URL. We're using the /loq endpoint, the one that the iPhone
@@ -59,7 +59,7 @@ abstract class SnapchatAgent {
 		CURLOPT_CONNECTTIMEOUT => 5,
 		CURLOPT_RETURNTRANSFER => TRUE,
 		CURLOPT_TIMEOUT => 10,
-		CURLOPT_USERAGENT => 'Snapchat/4.1.07 (Nexus 4; Android 18; gzip)',
+		CURLOPT_USERAGENT => 'Snapchat/8.0.1.3 (Nexus 4; Android 18; gzip)',
 	);
 
 	/**
@@ -292,34 +292,42 @@ abstract class SnapchatAgent {
 
 		$data['req_token'] = self::hash($params[0], $params[1]);
 		$data['version'] = self::VERSION;
+		
+		if(array_key_exists('dl', $data)) {
+			$download = $data['dl'];
+		}
 
 		if (!$multipart) {
 			$data = http_build_query($data);
 		}
 
-		if(array_key_exists('dl', $data)){
-			$download = $data['dl'];
-		}
-
 		if($endpoint == "/get_captcha" || $endpoint == "/solve_captcha" ) {
+
 		$options = self::$CURL_OPTIONS + array(
 			CURLOPT_POST => TRUE,
 			CURLOPT_POSTFIELDS => $data,
 			CURLOPT_URL => self::OLD_URL . $endpoint,
 		);
+
+		curl_setopt($ch, CURLOPT_VERBOSE, true);
+		file_put_contents(".headers.txt", " ");
+		curl_setopt($ch, CURLOPT_STDERR, fopen(dirname(__DIR__) . "/.headers.txt", "r+"));
+		
 		} else {
+
 		$options = self::$CURL_OPTIONS + array(
 			CURLOPT_POST => TRUE,
 			CURLOPT_POSTFIELDS => $data,
 			CURLOPT_URL => self::URL . $endpoint,
 		);
-		}
-		curl_setopt_array($ch, $options);
 
+		}
+		
+		curl_setopt_array($ch, $options);
 		$result = curl_exec($ch);
 
 		// upon registration, the captcha sends us a header to download.
-		if (curl_getinfo($ch, CURLINFO_CONTENT_TYPE) == "application/zip; $charset=UTF-8") {
+		if (curl_getinfo($ch, CURLINFO_CONTENT_TYPE) == "application/zip; charset=UTF-8") {
 			$filename = fopen(dirname(__DIR__) . "/.headers.txt", "r+");
 			$stream = stream_get_contents($filename);
 			$file = preg_match("/(=)(\S+).zip/", $stream, $match);
