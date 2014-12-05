@@ -25,7 +25,7 @@ $snapchat = new Snapchat('username' 'password');
 //Register an Account and username:
 $snapchat = new Snapchat();
 $snapchat->register('email','password','birthday');
-$snapchat->register_username('email', 'username');
+$snapchat->registerUsername('email', 'username');
 
 // Get your feed:
 $snaps = $snapchat->getSnaps();

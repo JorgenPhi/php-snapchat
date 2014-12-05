@@ -221,7 +221,7 @@ class Snapchat extends SnapchatAgent {
 	 *	 71 - bad username
 	 *	 72 - taken
 	 */
-	public function register_username($email, $username) {
+	public function registerUsername($email, $username) {
 		$timestamp = parent::timestamp();
 		$result = parent::post(
 			'/register_username',
