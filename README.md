@@ -20,7 +20,12 @@ Include src/snapchat.php via require_once or Composer or whatever, then:
 <?php
 
 // Log in:
-$snapchat = new Snapchat('username', 'password');
+$snapchat = new Snapchat('username' 'password');
+
+//Register an Account and username:
+$snapchat = new Snapchat();
+$snapchat->register('email','password','birthday');
+$snapchat->register_username('email', 'username');
 
 // Get your feed:
 $snaps = $snapchat->getSnaps();
@@ -106,88 +111,17 @@ $snapchat->logout();
 ?>
 ```
 
-##Snaptcha
+Snaptcha
+-----
 
-Below is an example on how to bypass the "Snaptcha" made by Snapchat.
-This fork includes two new methods.
-
-getCaptcha()
-
-and
-
-sendCaptcha()
-
-[The new endpoints are discussed in more detail here](http://www.hakobaito.co.uk/b/bypassing-snaptcha)
-
-Example:
-
+For the methods on bypassing Snapchat's captcha system see this [gist](https://gist.github.com/hako/adb2ab9419eda2dca62b):
 ```php
-<?php
-
-/*
-Snaptcha Bypass sample
-hako 2014
-*/
-
-include 'src/snapchat.php';
-
-// dummy variables.
-$email = "snaptchabypassexample@gmail.com";
-$password = "snaptchabypassexamplepass";
-$birthday = "1933-05-13";
-$username = "snaptchauser";
-
-$s = new Snapchat();
-$s->register($email,$password,$birthday); // Register an account...
-$registration = $s->register_username($email, $username); // Register desired username...
-
-// registration check...
-if(is_int($registration)) {
-
-	if ($registration == 69) {
-		print "username is too short!\n";
-		exit();
-	}
-
-	else if ($registration == 70) {
-		print "username is too long!\n";
-		exit();
-	}
-
-	else if ($registration == 71) {
-		print "bad username\n";
-		exit();
-	}
-
-	else if ($registration == 72) {
-		print "username is taken!\n";
-		exit();
-	}
-}
-
-$captcha_id = $s->getCaptcha($username, true);	// verify yourself...
-
-//   Ask the user for the captcha,
-//  (should be replaced with respected ghost images)...
-//  returns false if unable to get the captcha_id.
-
-print $captcha_id . "\n";
-echo "captcha: ";
-$solution_raw = fgets(STDIN); // Solution is 9 characters long eg. 001010011
-$solution = str_replace("\n", "", $solution_raw); // strip off invisible characters.
-$verify = $s->sendCaptcha($solution, $captcha_id, $username); // Send off Snaptcha.
-
-// Check if Snaptcha is correct...
-if($verify == TRUE) {
-    print "Snaptcha passed, Snapchat account verified.";
-}
-else if($verify == FALSE) {
-    print "Incorrect Snaptcha, Snapchat account not verified.";
-}
-
-?>
+$s->getCaptcha('username', true);
 ```
 
+```php
+$s->sendCaptcha('solution', 'captcha_id', 'username');
+```
 
 Documentation
 ------------
