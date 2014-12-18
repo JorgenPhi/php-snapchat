@@ -190,7 +190,7 @@ abstract class SnapchatAgent {
 	 */
 	function isImage($data) {
 		// Check for a JPG header.
-		return ($data[0] == chr(0xFF) && $data[1] == chr(0xD8))
+		return ($data[0] == chr(0xFF) && $data[1] == chr(0xD8));
 	}
 	
 	/**
