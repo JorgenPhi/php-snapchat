@@ -295,6 +295,10 @@ abstract class SnapchatAgent {
 			CURLOPT_POST => TRUE,
 			CURLOPT_POSTFIELDS => $data,
 			CURLOPT_URL => self::URL . $endpoint,
+			CURLOPT_HTTPHEADER => array(
+				'Accept-Language: en-GB;q=1, en;q=0.9',
+				'Accept-Locale: en'
+			),
 		);
 		curl_setopt_array($ch, $options);
 
