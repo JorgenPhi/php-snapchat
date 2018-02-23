@@ -230,16 +230,16 @@ class Snapchat extends SnapchatAgent {
 	 *   The data returned by the service or FALSE on failure.
 	 */
 	public function getUpdates($force = FALSE) {
-		if (!$force) {
+		// Make sure we're logged in and have a valid access token.
+		if (!$this->auth_token || !$this->username) {
+			return FALSE;
+		}
+
+		if (!$force && isset($this->cache)) {
 			$result = $this->cache->get('updates');
 			if ($result) {
 				return $result;
 			}
-		}
-
-		// Make sure we're logged in and have a valid access token.
-		if (!$this->auth_token || !$this->username) {
-			return FALSE;
 		}
 
 		$timestamp = parent::timestamp();
@@ -257,7 +257,9 @@ class Snapchat extends SnapchatAgent {
 
 		if (!empty($result->updates_response)) {
 			$this->auth_token = $result->updates_response->auth_token;
-			$this->cache->set('updates', $result->updates_response);
+			if (isset($this->cache)) {
+				$this->cache->set('updates', $result->updates_response);
+			}
 			return $result->updates_response;
 		}
 
@@ -313,16 +315,16 @@ class Snapchat extends SnapchatAgent {
 	 *   An array of stories or FALSE on failure.
 	 */
 	function getFriendStories($force = FALSE) {
-		if (!$force) {
+		// Make sure we're logged in and have a valid access token.
+		if (!$this->auth_token || !$this->username) {
+			return FALSE;
+		}
+
+		if (!$force && isset($this->cache)) {
 			$result = $this->cache->get('stories');
 			if ($result) {
 				return $result;
 			}
-		}
-
-		// Make sure we're logged in and have a valid access token.
-		if (!$this->auth_token || !$this->username) {
-			return FALSE;
 		}
 
 		$timestamp = parent::timestamp();
@@ -338,7 +340,7 @@ class Snapchat extends SnapchatAgent {
 			)
 		);
 
-		if (!empty($result->stories_response)) {
+		if (isset($this->cache) && !empty($result->stories_response)) {
 			$this->cache->set('stories', $result->stories_response);
 		}
 		else {
