@@ -177,17 +177,35 @@ abstract class SnapchatAgent {
 	 *   TRUE if the blob looks like a media file, FALSE otherwise.
 	 */
 	function isMedia($data) {
+		return isImage($data) || isVideo($data);
+	}
+	
+	/**
+	 * Checks to see if a blob looks like an image file.
+	 * 
+	 * @param data $data
+	 *   The blob data (or just the header).
+	 * 
+	 * @return bool
+	 *   TRUE if the blob looks like an image (jpeg), FALSE otherwise.
+	 */
+	function isImage($data) {
 		// Check for a JPG header.
-		if ($data[0] == chr(0xFF) && $data[1] == chr(0xD8)) {
-			return TRUE;
-		}
-
+		return ($data[0] == chr(0xFF) && $data[1] == chr(0xD8));
+	}
+	
+	/**
+	 * Checks to see if a blob looks like a video file.
+	 * 
+	 * @param data $data
+	 *   The blob data (or just the header).
+	 * 
+	 * @return bool
+	 *   TRUE if the blob looks like an video (mp4), FALSE otherwise.
+	 */
+	function isVideo($data) {
 		// Check for a MP4 header.
-		if ($data[0] == chr(0x00) && $data[1] == chr(0x00)) {
-			return TRUE;
-		}
-
-		return FALSE;
+		return ($data[0] == chr(0x00) && $data[1] == chr(0x00));
 	}
 
 	/**
