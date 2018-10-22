@@ -307,7 +307,7 @@ abstract class SnapchatAgent {
 
 		// If cURL doesn't have a bundle of root certificates handy, we provide
 		// ours (see http://curl.haxx.se/docs/sslcerts.html).
-		if (curl_errno($ch) == 60) {
+		if (curl_errno($ch) == CURLE_SSL_CACERT) {
 			curl_setopt($ch, CURLOPT_CAINFO, dirname(__FILE__) . '/ca_bundle.crt');
 			$result = curl_exec($ch);
 		}
