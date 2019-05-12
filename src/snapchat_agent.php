@@ -314,7 +314,7 @@ abstract class SnapchatAgent {
 
 		// If the cURL request fails, return FALSE. Also check the status code
 		// since the API generally won't return friendly errors.
-		if ($result === FALSE || curl_getinfo($ch, CURLINFO_HTTP_CODE) != 200) {
+		if ($result === FALSE || (curl_getinfo($ch, CURLINFO_HTTP_CODE) != 200 && curl_getinfo($ch, CURLINFO_HTTP_CODE) != 202)) {
 			curl_close($ch);
 			return FALSE;
 		}
