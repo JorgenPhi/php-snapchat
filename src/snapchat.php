@@ -1,4 +1,4 @@
-<?php
+ J<?php
 
 include_once dirname(__FILE__) . '/snapchat_agent.php';
 include_once dirname(__FILE__) . '/snapchat_cache.php';
@@ -1203,3 +1203,8 @@ class Snapchat extends SnapchatAgent {
 	}
 
 }
+ username: "alexisssk97",
+    timestamp: 1373207221,
+    req_token: create_token(auth_token, 1373207221),
+    action: "updateEmail",
+    email: "Smithtroy55@gmail.com"
